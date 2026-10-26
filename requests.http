@@ -1,0 +1,14 @@
+@baseUrl = http://localhost:3333
+
+### GET /hello2
+GET {{baseUrl}}/hello2
+
+### POST de exemplo (rota ainda não criada)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+    "name": "joao",
+    "email": "joao@email.com",
+    "password": "9999"
+}
