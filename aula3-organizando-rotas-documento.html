@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backend I · Aula 03 — Organizando as rotas (documento)</title>
+<style>
+@font-face{
+  font-family:"Galmuri11";
+  src:url("data:font/woff2;base64,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") format("woff2");
+  font-display:block;
+}
+:root{
+  --bg:#191b22; --bg2:#20232d; --panel:#242834; --code:#0f1116; --grid:rgba(255,255,255,.028);
+  --ink:#f3efe4; --body:#cdd2dc; --muted:#8b909d; --accent:#f0a437; --accent-dim:#7a5a1f;
+  --green:#5fbf7a; --blue:#6db6ff; --red:#cf4a3a; --purple:#8f5fd4; --yellow:#e6c341;
+  --pixel:polygon(
+    0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0,
+    calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%,
+    8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)
+  );
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:var(--body); line-height:1.65; font-size:17px;
+  background:
+    radial-gradient(120% 60% at 50% 0%, var(--bg2), var(--bg) 62%) fixed,
+    repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 44px),
+    var(--bg);
+}
+.pix{font-family:"Galmuri11",monospace; letter-spacing:.3px; -webkit-font-smoothing:none}
+main{max-width:860px; margin:0 auto; padding:64px 24px 96px}
+
+/* cabeçalho */
+.eyebrow{color:var(--accent); font-size:14px; letter-spacing:3px}
+.eyebrow .sq{display:inline-block;width:.6em;height:.6em;background:var(--accent);margin-right:.5em}
+h1{font-family:"Galmuri11",monospace; font-weight:400; color:var(--ink); font-size:clamp(32px,5.5vw,54px); line-height:1.1; margin:14px 0 18px; text-shadow:4px 4px 0 rgba(0,0,0,.45)}
+h1 .hl{color:var(--accent)}
+.lead{font-size:19px; color:var(--ink); max-width:62ch}
+
+/* sumário */
+nav.toc{margin:36px 0 8px; background:var(--panel); clip-path:var(--pixel); padding:20px 26px; box-shadow:inset 5px 5px 0 rgba(255,255,255,.05),inset -6px -6px 0 rgba(0,0,0,.35)}
+nav.toc .cap{color:var(--muted); font-size:12px; letter-spacing:2px; display:block; margin-bottom:10px}
+nav.toc ol{list-style:none; counter-reset:t; display:grid; grid-template-columns:1fr 1fr; gap:6px 24px}
+nav.toc li{counter-increment:t}
+nav.toc a{color:var(--ink); text-decoration:none; font-size:15px}
+nav.toc a::before{content:counter(t,decimal-leading-zero) "  "; color:var(--accent); font-family:"Galmuri11",monospace}
+nav.toc a:hover{color:var(--accent)}
+
+/* seções */
+section{margin-top:64px; scroll-margin-top:24px}
+h2{font-family:"Galmuri11",monospace; font-weight:400; color:var(--ink); font-size:clamp(24px,3.6vw,32px); line-height:1.2; margin-bottom:18px; text-shadow:3px 3px 0 rgba(0,0,0,.4); display:flex; align-items:baseline; gap:14px}
+h2 .n{color:var(--accent); font-size:.7em}
+p{margin:0 0 14px; max-width:68ch}
+strong,b{color:var(--ink)}
+code{font-family:"Galmuri11",ui-monospace,monospace; font-size:.86em; color:var(--yellow); background:rgba(255,255,255,.06); padding:1px 6px}
+ul.list,ol.steps{margin:4px 0 18px; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px; max-width:70ch}
+ul.list li{display:flex; gap:12px}
+ul.list li::before{content:"▸"; color:var(--accent); flex:none; font-family:"Galmuri11",monospace}
+ol.steps{counter-reset:s}
+ol.steps li{counter-increment:s; display:flex; gap:14px; align-items:center; color:var(--ink)}
+ol.steps li::before{content:counter(s); flex:none; display:inline-flex; align-items:center; justify-content:center; width:1.9em; height:1.9em; background:var(--purple); color:#fff; clip-path:var(--pixel); font-family:"Galmuri11",monospace; font-size:.9em; box-shadow:inset 4px 4px 0 rgba(255,255,255,.28),inset -4px -4px 0 rgba(0,0,0,.3)}
+
+/* blocos de código */
+.output{position:relative; background:var(--code); clip-path:var(--pixel); padding:16px 22px 18px; margin:10px 0 20px; box-shadow:inset 5px 5px 0 rgba(255,255,255,.04),inset -6px -6px 0 rgba(0,0,0,.5); overflow-x:auto}
+.output .bar{display:block; color:var(--muted); font-family:"Galmuri11",monospace; font-size:12px; letter-spacing:2px; margin-bottom:10px}
+.output pre{font-family:"Galmuri11",ui-monospace,monospace; font-size:14.5px; line-height:1.6; color:var(--ink); white-space:pre}
+.tk-kw{color:#6aa8f0} .tk-str{color:var(--yellow)} .tk-cm{color:var(--muted)} .tk-fn{color:var(--accent)} .tk-num{color:var(--green)}
+.copy-btn{position:absolute; top:10px; right:12px; border:none; cursor:pointer; font-family:"Galmuri11",monospace; font-size:12px; letter-spacing:1px; padding:6px 10px; background:var(--panel); color:var(--ink); clip-path:var(--pixel); box-shadow:inset 3px 3px 0 rgba(255,255,255,.08),inset -3px -3px 0 rgba(0,0,0,.4)}
+.copy-btn:hover{background:var(--accent-dim)}
+.copy-btn.done{background:var(--green); color:#08221d}
+
+/* painéis */
+.panel{background:var(--panel); clip-path:var(--pixel); padding:18px 22px; margin:14px 0 20px; box-shadow:inset 5px 5px 0 rgba(255,255,255,.05),inset -6px -6px 0 rgba(0,0,0,.35)}
+.panel .cap{display:block; font-family:"Galmuri11",monospace; font-size:12px; letter-spacing:2px; margin-bottom:6px}
+.panel p:last-child{margin-bottom:0}
+.panel.tip .cap{color:var(--green)}
+.panel.warn{box-shadow:inset 0 0 0 2px rgba(207,74,58,.55),inset 5px 5px 0 rgba(255,255,255,.04)}
+.panel.warn .cap{color:var(--red)}
+.panel.note .cap{color:var(--accent)}
+
+/* prefix + rota = url */
+.url-grid{display:grid; grid-template-columns:1fr auto 1fr auto 1.5fr; align-items:center; gap:12px 14px; margin:18px 0 8px}
+.url-grid .hd{color:var(--muted); font-family:"Galmuri11",monospace; font-size:12px; letter-spacing:2px; text-align:center}
+.url-grid .cell{background:var(--panel); clip-path:var(--pixel); padding:14px 10px; text-align:center; font-family:"Galmuri11",monospace; color:var(--ink); font-size:16px; box-shadow:inset 4px 4px 0 rgba(255,255,255,.06),inset -5px -5px 0 rgba(0,0,0,.4)}
+.url-grid .cell.res{background:var(--accent); color:#241a05; box-shadow:inset 5px 5px 0 rgba(255,255,255,.3),inset -5px -5px 0 rgba(0,0,0,.3)}
+.url-grid .op{color:var(--accent); font-family:"Galmuri11",monospace; font-size:22px}
+
+/* tabela de erros */
+.errors{display:flex; flex-direction:column; gap:12px; margin:14px 0 20px}
+.err{display:grid; grid-template-columns:120px 1fr; gap:18px; align-items:start; background:var(--panel); clip-path:var(--pixel); padding:16px 20px; box-shadow:inset 5px 5px 0 rgba(255,255,255,.05),inset -6px -6px 0 rgba(0,0,0,.35)}
+.err .tag{display:inline-flex; justify-content:center; padding:6px 8px; background:var(--red); color:#fff; clip-path:var(--pixel); font-family:"Galmuri11",monospace; font-size:13px; box-shadow:inset 4px 4px 0 rgba(255,255,255,.22),inset -4px -4px 0 rgba(0,0,0,.32)}
+.err .msg{color:var(--ink); margin-bottom:4px}
+.err .fix{color:var(--muted); font-size:15px}
+.err .fix b{color:var(--green); font-weight:400}
+
+/* resumo */
+.recap{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:16px 0 22px}
+.recap .card{background:var(--panel); clip-path:var(--pixel); padding:18px 20px; box-shadow:inset 5px 5px 0 rgba(255,255,255,.05),inset -6px -6px 0 rgba(0,0,0,.38)}
+.recap .card .t{display:block; font-family:"Galmuri11",monospace; color:var(--accent); margin-bottom:6px}
+.recap .card p{font-size:15px; margin:0}
+
+footer{margin-top:72px; padding-top:20px; border-top:2px solid rgba(255,255,255,.06); color:var(--muted); font-size:13px; letter-spacing:2px}
+footer b{color:var(--accent); font-weight:400}
+
+@media (max-width:680px){
+  body{font-size:16px}
+  nav.toc ol{grid-template-columns:1fr}
+  .recap{grid-template-columns:1fr}
+  .err{grid-template-columns:1fr; gap:10px}
+  .url-grid{grid-template-columns:1fr auto 1fr; }
+  .url-grid .eq,.url-grid .res,.url-grid .hd-res{grid-column:1 / -1}
+  .url-grid .eq{display:none}
+}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="eyebrow pix"><span class="sq"></span>BACKEND I · AULA 03 · DOCUMENTO</div>
+  <h1>Organizando<br>as <span class="hl">rotas</span></h1>
+  <p class="lead">Cada assunto da API ganha o seu próprio arquivo de rotas, e o <code>server.ts</code> só liga o servidor e registra esses arquivos. A API continua respondendo igual, mas o código fica pronto pra crescer.</p>
+</header>
+
+<nav class="toc" aria-label="Sumário">
+  <span class="cap pix">NESTE DOCUMENTO</span>
+  <ol>
+    <li><a href="#porque">Por que separar as rotas</a></li>
+    <li><a href="#plugin">O arquivo de rotas é um plugin</a></li>
+    <li><a href="#server">O server.ts enxuto</a></li>
+    <li><a href="#url">Como a URL é montada</a></li>
+    <li><a href="#products">Repetindo o molde: products</a></li>
+    <li><a href="#testando">Testando: nada mudou por fora</a></li>
+    <li><a href="#erros">Erros comuns</a></li>
+    <li><a href="#estrutura">Estrutura final e resumo</a></li>
+  </ol>
+</nav>
+
+<!-- 01 -->
+<section id="porque">
+  <h2><span class="n">01</span>Por que separar as rotas</h2>
+  <p>Até a aula 2, todas as rotas moravam no <code>server.ts</code>. Com o CRUD de users completo, ele já passava de 70 linhas, misturando a configuração do servidor, a conexão com o banco e a regra de cada rota.</p>
+  <p>Cada assunto novo (products, orders, login...) deixaria esse arquivo ainda maior. A regra que passamos a seguir é simples:</p>
+  <ul class="list">
+    <li><span><strong>Um arquivo por assunto:</strong> tudo de users fica em <code>users.routes.ts</code>, tudo de products em <code>products.routes.ts</code>.</span></li>
+    <li><span><strong>O <code>server.ts</code> só liga e registra:</strong> ele não sabe mais nada sobre usuários.</span></li>
+  </ul>
+  <p>Assim fica fácil achar onde mexer, e uma mudança em users não corre o risco de quebrar products.</p>
+</section>
+
+<!-- 02 -->
+<section id="plugin">
+  <h2><span class="n">02</span>O arquivo de rotas é um plugin</h2>
+  <p>No Fastify, um <strong>plugin</strong> é uma função que recebe o <code>app</code> e acrescenta coisas nele, no nosso caso rotas. As rotas de users vão pra <code>src/routes/users.routes.ts</code>:</p>
+  <div class="output"><span class="bar">▤ src/routes/users.routes.ts</span><pre class="hl-code">import type { FastifyInstance } from "fastify"
+import { randomUUID } from "node:crypto"
+import { connection } from "../config/database.js"
+
+export async function usersRoutes(app: FastifyInstance) {
+    app.get("/", async () => {
+        const users = await connection("users").select("*")
+        return users
+    })
+
+    app.post("/", async (request, reply) => {
+        const { name, email, password } = request.body as UserBody
+        const user = { id: randomUUID(), name, email, password }
+        await connection("users").insert(user)
+        return reply.status(201).send(user)
+    })
+
+    // GET, PUT e DELETE em "/:id" seguem o mesmo molde
+}</pre></div>
+  <p>O que cada peça faz:</p>
+  <ul class="list">
+    <li><span><strong><code>export async function usersRoutes</code>:</strong> é o plugin. Precisa do <code>export</code> pra ser importado no <code>server.ts</code>. É <code>async</code> porque o Fastify espera o plugin terminar de montar as rotas antes de ligar o servidor.</span></li>
+    <li><span><strong><code>app: FastifyInstance</code>:</strong> o tipo do <code>app</code>. Aqui ele chega como parâmetro, e sem o tipo o TypeScript não sabe que ele tem <code>.get</code>, <code>.post</code> etc.</span></li>
+    <li><span><strong><code>"/"</code> e <code>"/:id"</code>:</strong> os caminhos ficam sem o <code>/users</code>. Quem coloca o <code>/users</code> é o <code>server.ts</code>.</span></li>
+    <li><span><strong>Os imports mudam de caminho:</strong> de dentro de <code>src/routes</code>, o banco fica em <code>"../config/database.js"</code> (o <code>../</code> sai da pasta <code>routes</code>).</span></li>
+  </ul>
+  <div class="panel note"><span class="cap">IMPORTANTE</span><p>A função não roda sozinha: ela só é chamada quando o <code>server.ts</code> faz o <code>register</code>.</p></div>
+</section>
+
+<!-- 03 -->
+<section id="server">
+  <h2><span class="n">03</span>O server.ts enxuto</h2>
+  <p>Depois da limpeza, o <code>server.ts</code> cabe em 11 linhas: cria o app, registra as rotas e liga o servidor.</p>
+  <div class="output"><span class="bar">▤ src/server.ts</span><pre class="hl-code">import fastify from "fastify"
+import { env } from "./shared/env/environments.js"
+import { usersRoutes } from "./routes/users.routes.js"
+
+const app = fastify()
+
+app.register(usersRoutes, { prefix: "/users" })
+
+app.listen({ port: env.PORT }).then(() => {
+    console.log("Rodando na porta: " + env.PORT)
+})</pre></div>
+  <ul class="list">
+    <li><span><strong><code>app.register(usersRoutes)</code>:</strong> chama a função do plugin passando o <code>app</code> pra ela. É isso que faz as rotas do arquivo passarem a existir no servidor.</span></li>
+    <li><span><strong><code>{ prefix: "/users" }</code>:</strong> o começo do caminho de todas as rotas daquele arquivo.</span></li>
+  </ul>
+  <div class="panel tip"><span class="cap">NA LIMPEZA</span><p>Apague os imports que ficaram sem uso (<code>connection</code> e <code>randomUUID</code>; o VS Code mostra eles meio apagados). Aproveite também pra trocar o <code>process.env.PORT</code> do <code>console.log</code> por <code>env.PORT</code>, que já foi validado pelo Zod.</p></div>
+</section>
+
+<!-- 04 -->
+<section id="url">
+  <h2><span class="n">04</span>Como a URL é montada</h2>
+  <p>O <code>prefix</code> do <code>server.ts</code> é colado na frente de cada rota do arquivo. O resultado é a URL final:</p>
+  <div class="url-grid" role="table" aria-label="prefix mais rota igual a URL final">
+    <div class="hd">PREFIX</div><div></div><div class="hd">ROTA</div><div class="eq"></div><div class="hd hd-res">URL FINAL</div>
+
+    <div class="cell">/users</div><div class="op">+</div><div class="cell">/</div><div class="op eq">=</div><div class="cell res">GET e POST /users</div>
+    <div class="cell">/users</div><div class="op">+</div><div class="cell">/:id</div><div class="op eq">=</div><div class="cell res">GET, PUT e DELETE /users/:id</div>
+    <div class="cell">/products</div><div class="op">+</div><div class="cell">/</div><div class="op eq">=</div><div class="cell res">GET /products</div>
+  </div>
+  <div class="panel warn"><span class="cap">CUIDADO</span><p>Escrever <code>app.get("/users")</code> dentro do arquivo vira <code>/users/users</code>, porque o prefixo já foi colocado. Aí <code>GET /users</code> dá 404.</p></div>
+  <p>Vantagem extra: o <code>/users</code> fica escrito num lugar só. Se um dia a rota virar <code>/clientes</code>, muda só o <code>prefix</code> no <code>server.ts</code>.</p>
+</section>
+
+<!-- 05 -->
+<section id="products">
+  <h2><span class="n">05</span>Repetindo o molde: products</h2>
+  <p><strong>Assunto novo = arquivo novo + uma linha no <code>server.ts</code>.</strong> Sempre assim.</p>
+  <ol class="steps">
+    <li>Crie o arquivo na pasta <code>routes</code>.</li>
+    <li>Exporte uma função que recebe o <code>app</code>.</li>
+    <li>Acrescente uma linha de <code>register</code> no <code>server.ts</code>.</li>
+  </ol>
+  <div class="output"><span class="bar">▤ src/routes/products.routes.ts</span><pre class="hl-code">import type { FastifyInstance } from "fastify"
+
+export async function productsRoutes(app: FastifyInstance) {
+    app.get("/", async () => {
+        return [{ name: "Teclado" }]
+    })
+}</pre></div>
+  <div class="output"><span class="bar">▤ src/server.ts · acrescenta</span><pre class="hl-code">import { productsRoutes } from "./routes/products.routes.js"
+
+app.register(usersRoutes, { prefix: "/users" })
+app.register(productsRoutes, { prefix: "/products" })</pre></div>
+  <p>Ainda não existe a tabela <code>products</code>, por isso a rota devolve uma lista fixa. A migration pode ser criada depois com <code>npm run knex -- migrate:make create_products</code>.</p>
+</section>
+
+<!-- 06 -->
+<section id="testando">
+  <h2><span class="n">06</span>Testando: nada mudou por fora</h2>
+  <p>Isso tem nome: <strong>refatoração</strong>, que é mudar a estrutura do código sem mudar o comportamento. Quem usa a API não percebe nada; quem mantém o código agradece.</p>
+  <p>Pra provar que nada quebrou, rode <code>npm run dev</code> e dispare os pedidos do <code>requests.http</code>:</p>
+  <div class="output"><span class="bar">▤ requests.http</span><pre>GET {{baseUrl}}/users
+POST {{baseUrl}}/users
+GET {{baseUrl}}/products</pre></div>
+  <ul class="list">
+    <li><span><strong><code>/users</code>:</strong> responde igual a antes. Rode o POST e depois o GET pra ver o usuário salvo no banco.</span></li>
+    <li><span><strong><code>/products</code>:</strong> a rota nova, que devolve a lista fixa.</span></li>
+  </ul>
+</section>
+
+<!-- 07 -->
+<section id="erros">
+  <h2><span class="n">07</span>Erros comuns</h2>
+  <div class="errors">
+    <div class="err"><span class="tag">404</span><div><p class="msg">Todas as rotas do arquivo dão 404.</p><p class="fix">Faltou o <code>app.register</code> no <code>server.ts</code>. <b>→</b> Registre o plugin com o <code>prefix</code>.</p></div></div>
+    <div class="err"><span class="tag">404</span><div><p class="msg"><code>/users</code> dá 404, mas <code>/users/users</code> funciona.</p><p class="fix">O caminho foi repetido dentro do arquivo. <b>→</b> Use <code>"/"</code> e <code>"/:id"</code> no arquivo de rotas.</p></div></div>
+    <div class="err"><span class="tag">módulo</span><div><p class="msg"><code>Cannot find module '.../config/database.js'</code></p><p class="fix">Faltou o <code>.js</code> no import ou o <code>../</code> pra sair da pasta <code>routes</code>. <b>→</b> Confira: <code>"../config/database.js"</code>.</p></div></div>
+    <div class="err"><span class="tag">export</span><div><p class="msg"><code>does not provide an export named ...</code></p><p class="fix">Faltou o <code>export</code> antes da função, ou o nome está diferente no import. <b>→</b> Confira o nome nos dois arquivos.</p></div></div>
+    <div class="err"><span class="tag">tipo</span><div><p class="msg">TypeScript reclamando do <code>app</code>.</p><p class="fix">Faltou o tipo no parâmetro. <b>→</b> Escreva <code>app: FastifyInstance</code>.</p></div></div>
+  </div>
+  <div class="panel note"><span class="cap">POR QUE .js SE O ARQUIVO É .ts?</span><p>O projeto usa <code>"type": "module"</code> no <code>package.json</code>, e nos imports em ESM o TypeScript resolve o <code>.js</code> para o arquivo <code>.ts</code>.</p></div>
+  <p>Se o servidor nem sobe, olhe o terminal do <code>npm run dev</code>: a primeira linha vermelha diz o arquivo e a linha do erro.</p>
+</section>
+
+<!-- 08 -->
+<section id="estrutura">
+  <h2><span class="n">08</span>Estrutura final e resumo</h2>
+  <p>Comparado ao fim da aula 2, só entrou a pasta <code>routes</code>; o <code>server.ts</code> emagreceu.</p>
+  <div class="output"><span class="bar">▤ árvore do projeto</span><pre>curso/
++-- src/
+|   +-- config/
+|   |   `-- database.ts
+|   +-- <span class="tk-fn">routes/                  (nova)</span>
+|   |   +-- <span class="tk-fn">users.routes.ts</span>
+|   |   `-- <span class="tk-fn">products.routes.ts</span>
+|   +-- shared/
+|   |   +-- database/migrations/
+|   |   `-- env/
+|   `-- <span class="tk-num">server.ts                (só liga e registra)</span>
++-- db.sqlite
++-- knexfile.ts
+`-- package.json</pre></div>
+  <div class="recap">
+    <div class="card"><span class="t">Por que separar</span><p>Um arquivo por assunto, fácil de achar e de mexer.</p></div>
+    <div class="card"><span class="t">Plugin no Fastify</span><p>Uma função que recebe o <code>app</code> e cria rotas nele.</p></div>
+    <div class="card"><span class="t">register + prefix</span><p>Ligam cada arquivo no servidor e definem o começo do caminho.</p></div>
+  </div>
+  <div class="panel tip"><span class="cap">PRÓXIMA AULA</span><p>Validar o corpo das requisições com Zod e completar o CRUD de users.</p></div>
+</section>
+
+<footer class="pix">BACKEND I · <b>Organizando as rotas</b></footer>
+</main>
+
+<script>
+(function(){
+  // colore os blocos de código marcados com .hl-code
+  var KW = ['import','from','export','async','function','const','return','await','type','as'];
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  document.querySelectorAll('pre.hl-code').forEach(function(pre){
+    var src = pre.textContent, out = '', m;
+    var re = /(\/\/[^\n]*)|("(?:[^"\\]|\\.)*")|(\b\d+\b)|([A-Za-z_$][\w$]*)|([\s\S])/g;
+    while((m = re.exec(src))){
+      if(m[1]) out += '<span class="tk-cm">'+esc(m[1])+'</span>';
+      else if(m[2]) out += '<span class="tk-str">'+esc(m[2])+'</span>';
+      else if(m[3]) out += '<span class="tk-num">'+m[3]+'</span>';
+      else if(m[4]){
+        if(KW.indexOf(m[4]) >= 0) out += '<span class="tk-kw">'+m[4]+'</span>';
+        else if(/^\s*\(/.test(src.slice(re.lastIndex))) out += '<span class="tk-fn">'+m[4]+'</span>';
+        else out += m[4];
+      }
+      else out += esc(m[5]);
+    }
+    pre.innerHTML = out;
+  });
+
+  // botão copiar em cada bloco de código
+  document.querySelectorAll('.output').forEach(function(box){
+    var pre = box.querySelector('pre'), btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'copy-btn'; btn.textContent = 'copiar';
+    btn.addEventListener('click', function(){
+      var text = pre.textContent;
+      var done = function(){ btn.textContent = 'copiado!'; btn.classList.add('done');
+        setTimeout(function(){ btn.textContent = 'copiar'; btn.classList.remove('done'); }, 1500); };
+      if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).then(done); }
+      else { var ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){} ta.remove(); }
+    });
+    box.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>
