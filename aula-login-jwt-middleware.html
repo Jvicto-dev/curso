@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend I · Login, JWT e middleware (Node)</title>
+<style>
+@font-face{
+  font-family:"Galmuri11";
+  src:url("data:font/woff2;base64,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") format("woff2");
+  font-display:block;
+}
+
+:root{
+  --bg:#191b22; --bg2:#20232d; --panel:#242834; --grid:rgba(255,255,255,.028);
+  --ink:#f3efe4; --muted:#8b909d; --accent:#f0a437; --accent-dim:#7a5a1f;
+  --green:#5fbf7a; --blue:#6db6ff;
+
+  --c-var:#8f5fd4;   --c-var-t:#fff;
+  --c-op:#cf4a3a;    --c-op-t:#fff;
+  --c-func:#d99a3e;  --c-func-t:#2a2116;
+  --c-kw:#3f83d6;    --c-kw-t:#fff;
+  --c-tag:#2fa58c;   --c-tag-t:#08221d;
+  --c-str:#c4c8d1;   --c-str-t:#22252e;
+  --c-strq:#e6c341;  --c-strq-t:#332a08;
+  --c-punct:#5f6572; --c-punct-t:#e8ebf0;
+  --c-go:#41a6c4;    --c-go-t:#04222b;
+
+  --pixel:polygon(
+    0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0,
+    calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%,
+    8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)
+  );
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:"Galmuri11",monospace; background:var(--bg); color:var(--ink);
+  overflow:hidden; -webkit-font-smoothing:none; font-smooth:never;
+  image-rendering:pixelated; letter-spacing:.3px;
+}
+
+#stage{
+  position:fixed; inset:0; cursor:pointer;
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--bg2), var(--bg) 62%),
+    repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 44px);
+}
+#stage::after{content:""; position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 220px 40px rgba(0,0,0,.55)}
+
+.slide{position:absolute; inset:0; display:none; flex-direction:column; justify-content:center; align-items:flex-start; padding:6vh 8vw 12vh; gap:22px}
+.slide.active{display:flex}
+
+.eyebrow{color:var(--accent); font-size:clamp(13px,1.6vw,20px); letter-spacing:3px}
+.eyebrow .sq{display:inline-block;width:.55em;height:.55em;background:var(--accent);margin-right:.5em;transform:translateY(-.1em)}
+
+h1{font-size:clamp(34px,6.4vw,84px); line-height:1.06; font-weight:400; text-shadow:4px 4px 0 rgba(0,0,0,.45)}
+h1 .hl{color:var(--accent)}
+h2{font-size:clamp(24px,4.4vw,56px); line-height:1.1; font-weight:400; text-shadow:3px 3px 0 rgba(0,0,0,.4)}
+.sub{color:var(--muted); font-size:clamp(15px,2.2vw,28px); line-height:1.35; max-width:36ch}
+.lead{font-size:clamp(17px,2.6vw,33px); line-height:1.4; max-width:32ch}
+.big{font-size:clamp(23px,3.9vw,50px); line-height:1.25}
+.big .hl{color:var(--accent)} .big .warn{color:var(--c-op)} .big .grn{color:var(--green)}
+
+[data-step]{opacity:0; transform:translateY(16px); transition:opacity .4s ease, transform .4s ease}
+[data-step].reveal{opacity:1; transform:none}
+
+.rows{display:flex; flex-direction:column; gap:14px; width:100%}
+.anatomy-cap{display:flex; flex-direction:column; gap:14px; width:100%; margin-top:6px}
+.row{display:flex; align-items:flex-start; gap:16px; font-size:clamp(15px,2.2vw,30px); line-height:1.3}
+.row .mk{color:var(--accent); flex:none} .row .mk.ok{color:var(--green)}
+.row small{color:var(--muted); font-size:.8em}
+.num{flex:none; display:inline-flex; align-items:center; justify-content:center; width:1.7em; height:1.7em; background:var(--c-var); color:#fff; clip-path:var(--pixel); box-shadow:inset 5px 5px 0 rgba(255,255,255,.28),inset -5px -5px 0 rgba(0,0,0,.3); font-size:.8em}
+.vtag{flex:none; display:inline-flex; align-items:center; justify-content:center; min-width:3.2em; padding:.35em .6em; clip-path:var(--pixel); font-size:.72em; box-shadow:inset 5px 5px 0 rgba(255,255,255,.22),inset -5px -5px 0 rgba(0,0,0,.32); text-shadow:2px 2px 0 rgba(0,0,0,.25)}
+
+.panel{background:var(--panel); clip-path:var(--pixel); padding:20px 24px; box-shadow:inset 5px 5px 0 rgba(255,255,255,.05),inset -6px -6px 0 rgba(0,0,0,.35); font-size:clamp(15px,2.2vw,28px); line-height:1.35}
+.panel.accent{color:var(--accent)}
+.panel .cap{color:var(--muted); font-size:.7em; display:block; margin-bottom:.4em; letter-spacing:2px}
+.panel .big-num{font-size:clamp(38px,6.5vw,84px); color:var(--accent); display:block; line-height:1; margin-bottom:.15em}
+
+/* grids */
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px; width:100%}
+.codes{display:flex; flex-wrap:wrap; align-items:flex-start; gap:18px; max-width:100%}
+.codes .output{max-width:100%}
+.langgrid{display:grid; grid-template-columns:1fr 1fr; gap:12px 26px; width:100%}
+.card{background:var(--panel); clip-path:var(--pixel); padding:18px 22px; box-shadow:inset 5px 5px 0 rgba(255,255,255,.05),inset -6px -6px 0 rgba(0,0,0,.38)}
+.card .co{font-size:clamp(18px,2.6vw,32px); display:flex; align-items:center; gap:12px; margin-bottom:8px}
+.card .fact{color:var(--muted); font-size:clamp(13px,1.8vw,22px); line-height:1.3}
+.card .fact b{color:var(--ink)}
+
+/* blocos lego */
+.code-line{display:flex; flex-wrap:wrap; align-items:center; gap:10px; opacity:1 !important; transform:none !important; margin:4px 0}
+.blk-wrap{filter:drop-shadow(0 6px 0 rgba(0,0,0,.5))}
+.blk{display:inline-flex; align-items:center; justify-content:center; padding:14px 20px; font-size:clamp(18px,2.7vw,36px); color:#fff; clip-path:var(--pixel);
+  box-shadow:inset 6px 6px 0 rgba(255,255,255,.30),inset -6px -6px 0 rgba(0,0,0,.34); text-shadow:2px 2px 0 rgba(0,0,0,.32);
+  opacity:0; transform:translateY(-22px) scale(.94)}
+.code-line.reveal .blk{animation:drop .34s cubic-bezier(.2,.9,.25,1.15) both; animation-delay:calc(var(--i,0)*70ms)}
+@keyframes drop{0%{opacity:0;transform:translateY(-22px) scale(.94)} 62%{opacity:1;transform:translateY(3px) scale(1.01)} 100%{opacity:1;transform:translateY(0) scale(1)}}
+.blk-var{background:var(--c-var);color:var(--c-var-t)}
+.blk-op{background:var(--c-op);color:var(--c-op-t)}
+.blk-func{background:var(--c-func);color:var(--c-func-t);text-shadow:2px 2px 0 rgba(255,255,255,.2)}
+.blk-kw{background:var(--c-kw);color:var(--c-kw-t)}
+.blk-tag{background:var(--c-tag);color:var(--c-tag-t);text-shadow:2px 2px 0 rgba(255,255,255,.18)}
+.blk-str{background:var(--c-str);color:var(--c-str-t);text-shadow:2px 2px 0 rgba(255,255,255,.35)}
+.blk-strq{background:var(--c-strq);color:var(--c-strq-t);text-shadow:2px 2px 0 rgba(255,255,255,.25)}
+.blk-punct{background:var(--c-punct);color:var(--c-punct-t)}
+.chip{display:inline-flex;opacity:1;transform:none;padding:6px 12px;font-size:.8em;flex:none}
+.chip[data-term]{cursor:pointer;position:relative;transition:transform .12s ease,box-shadow .12s ease}
+.chip[data-term]:hover{transform:translateY(-3px);box-shadow:inset 6px 6px 0 rgba(255,255,255,.30),inset -6px -6px 0 rgba(0,0,0,.34),0 4px 0 rgba(0,0,0,.35)}
+.chip[data-term]:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.chip[data-term]::after{content:"?";position:absolute;top:-8px;right:-8px;width:1.3em;height:1.3em;border-radius:0;background:var(--accent);color:#241a05;font-size:.6em;display:flex;align-items:center;justify-content:center;clip-path:var(--pixel);box-shadow:0 2px 0 rgba(0,0,0,.4)}
+
+.panel:has(.info-ic){position:relative; padding-right:64px}
+.info-ic{position:absolute; top:14px; right:14px; width:1.6em; height:1.6em; display:flex; align-items:center; justify-content:center;
+  background:var(--accent); color:#241a05; font-size:.75em; cursor:pointer; clip-path:var(--pixel);
+  box-shadow:inset 4px 4px 0 rgba(255,255,255,.3),inset -4px -4px 0 rgba(0,0,0,.3); transition:transform .12s ease}
+.info-ic:hover{transform:translateY(-3px)}
+.info-ic:focus-visible{outline:3px solid var(--ink); outline-offset:3px}
+
+/* modal de termo */
+#termOverlay{position:fixed;inset:0;z-index:50;background:rgba(8,9,13,.72);display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity .2s ease}
+#termOverlay.open{opacity:1;pointer-events:auto}
+#termModal{background:var(--panel);clip-path:var(--pixel);max-width:min(560px,92vw);max-height:80vh;overflow-y:auto;
+  padding:28px 30px;box-shadow:inset 6px 6px 0 rgba(255,255,255,.07),inset -8px -8px 0 rgba(0,0,0,.45),0 20px 0 rgba(0,0,0,.3);
+  transform:translateY(18px) scale(.97);transition:transform .22s cubic-bezier(.2,.9,.25,1.1);}
+#termOverlay.open #termModal{transform:none}
+#termModal .tm-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+#termModal .tm-chip{flex:none}
+#termModal .tm-title{font-size:clamp(20px,3vw,28px);color:var(--ink)}
+#termModal .tm-close{margin-left:auto;background:none;border:none;color:var(--muted);font-family:inherit;font-size:26px;cursor:pointer;width:36px;height:36px;line-height:1}
+#termModal .tm-close:hover{color:var(--accent)}
+#termModal .tm-body{font-size:clamp(15px,2vw,19px);line-height:1.55;color:#cdd2dc}
+#termModal .tm-body p{margin-bottom:12px}
+#termModal .tm-body .tm-example{margin-top:6px}
+#termModal .tm-body b{color:#fff}
+
+.output{display:inline-flex; flex-direction:column; gap:8px; background:#0f1116; clip-path:var(--pixel); padding:18px 24px; font-size:clamp(16px,2.4vw,32px); box-shadow:inset 5px 5px 0 rgba(255,255,255,.04),inset -6px -6px 0 rgba(0,0,0,.5)}
+.output .bar{color:var(--muted); font-size:.62em; letter-spacing:2px}
+.output .val{color:var(--green)}
+
+/* botao copiar nos blocos de codigo */
+.output{position:relative; padding-right:84px !important}
+.copy-btn{position:absolute; top:8px; right:10px; z-index:2; border:none; cursor:pointer; font-family:inherit; font-size:12px; letter-spacing:1px;
+  padding:6px 10px; background:var(--panel); color:var(--ink); clip-path:var(--pixel);
+  box-shadow:inset 3px 3px 0 rgba(255,255,255,.08),inset -3px -3px 0 rgba(0,0,0,.4); transition:transform .08s ease, background .15s}
+.copy-btn:hover{background:var(--accent-dim)} .copy-btn:active{transform:translateY(2px)}
+.copy-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.copy-btn.done{background:var(--green); color:#08221d}
+
+/* diagrama cliente/servidor */
+.diagram{display:flex; align-items:center; gap:20px; flex-wrap:wrap; width:100%; font-size:clamp(14px,2vw,26px)}
+.node{background:var(--panel); clip-path:var(--pixel); padding:20px 26px; text-align:center; min-width:160px; box-shadow:inset 5px 5px 0 rgba(255,255,255,.06),inset -6px -6px 0 rgba(0,0,0,.4)}
+.node .ic{font-size:1.4em; color:var(--accent); display:block; margin-bottom:6px}
+.arrows{display:flex; flex-direction:column; gap:14px; flex:1; min-width:180px}
+.arrow{display:flex; align-items:center; gap:10px; color:var(--muted)}
+.arrow .line{flex:1; height:6px; background:repeating-linear-gradient(90deg,var(--accent) 0 12px,transparent 12px 20px)}
+.arrow.back{flex-direction:row-reverse; color:var(--blue)}
+.arrow.back .line{background:repeating-linear-gradient(90deg,#3f83d6 0 12px,transparent 12px 20px)}
+.arrow .tip{color:var(--accent)} .arrow.back .tip{color:var(--blue)}
+.arrow .lbl{font-size:.8em; white-space:nowrap}
+
+.hint{color:var(--muted); font-size:clamp(14px,1.8vw,22px); letter-spacing:2px; animation:blink 1.2s steps(2) infinite}
+.hint .k{color:var(--accent)}
+@keyframes blink{50%{opacity:.25}}
+
+/* chrome */
+#bar{position:fixed; left:0; right:0; bottom:0; height:56px; display:flex; align-items:center; gap:16px; padding:0 18px; background:rgba(12,13,17,.75); border-top:2px solid rgba(255,255,255,.06); font-size:13px; letter-spacing:2px; color:var(--muted); z-index:20}
+#bar .brand{color:var(--ink)} #bar .brand b{color:var(--accent); font-weight:400}
+#prog{flex:1; height:10px; background:#0e0f14; clip-path:var(--pixel); box-shadow:inset 0 0 0 2px rgba(255,255,255,.05)}
+#prog i{display:block; height:100%; width:0; background:var(--accent); transition:width .35s ease}
+#count{color:var(--ink); min-width:70px; text-align:right}
+
+.navbtn{position:fixed; bottom:70px; z-index:20; width:64px; height:64px; border:none; cursor:pointer; background:var(--panel); color:var(--ink); font-family:inherit; font-size:30px; clip-path:var(--pixel); box-shadow:inset 6px 6px 0 rgba(255,255,255,.08),inset -6px -6px 0 rgba(0,0,0,.4); transition:transform .08s ease, background .15s}
+.navbtn:hover{background:#2e3342} .navbtn:active{transform:translateY(3px)} .navbtn:focus-visible{outline:3px solid var(--accent); outline-offset:3px}
+#prev{left:18px} #next{right:18px; background:var(--accent-dim)} #next:hover{background:#8f6a24}
+.fs{position:fixed; top:16px; right:18px; z-index:20; width:46px; height:46px; font-size:18px}
+
+@media (max-width:760px){
+  .slide{padding:5vh 6vw 14vh}
+  .navbtn{width:52px; height:52px; font-size:24px; bottom:66px}
+  .diagram{flex-direction:column; align-items:stretch}
+  .arrows{min-width:0}
+  .grid2,.langgrid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  [data-step],#prog i{transition:none}
+  .code-line.reveal .blk{animation:none; opacity:1; transform:none}
+  .blk{opacity:1; transform:none}
+  .hint{animation:none}
+}
+
+/* botao info + drawer de notas do professor */
+.info{position:fixed;top:70px;right:18px;z-index:22;width:46px;height:46px;font-size:24px}
+.info.active{background:var(--accent-dim)}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,88vw);background:var(--bg2);z-index:40;
+  transform:translateX(100%);transition:transform .32s cubic-bezier(.3,.8,.3,1);
+  display:flex;flex-direction:column;border-left:3px solid var(--accent);
+  box-shadow:-10px 0 0 rgba(0,0,0,.4), inset 6px 0 0 rgba(255,255,255,.05)}
+#drawer.open{transform:none}
+.notes-head{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:2px solid rgba(255,255,255,.08);flex:none}
+.nh-title{color:var(--accent);letter-spacing:2px;font-size:15px;flex:1}
+.nh-num{color:var(--muted);font-size:13px}
+#closeNotes{background:none;border:none;color:var(--ink);font-family:inherit;font-size:24px;cursor:pointer;width:34px;height:34px;line-height:1}
+#closeNotes:hover{color:var(--accent)}
+.notes-body{padding:20px 22px;overflow-y:auto;font-size:15px;line-height:1.55}
+.notes-body h4{color:var(--accent);font-size:12px;letter-spacing:2px;margin:20px 0 7px}
+.notes-body h4:first-child{margin-top:0}
+.notes-body p{margin-bottom:11px}
+.notes-body ul{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:11px}
+.notes-body li{display:flex;gap:9px;align-items:flex-start}
+.notes-body li::before{content:"\25B8";color:var(--accent);flex:none}
+.notes-body b{color:#fff}
+.notes-body .warn{color:#e78a70;background:rgba(207,74,58,.1);padding:9px 12px;clip-path:var(--pixel)}
+.notes-body .time{color:var(--muted);font-size:13px;letter-spacing:1px}
+.notes-body .say{color:#cdd2dc;font-style:normal;border-left:3px solid var(--accent-dim);padding-left:11px}
+
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <section class="slide">
+    <div class="eyebrow"><span class="sq"></span>VEM SER DEV · BACKEND I</div>
+    <h1>Login, <span class="hl">JWT</span><br>e middleware</h1>
+    <div class="sub" data-step="1">Até agora qualquer pessoa chama qualquer rota. Hoje a API aprende a saber <b>quem</b> está chamando.</div>
+    <div class="rows" data-step="2" style="margin-top:6px">
+      <div class="row"><span class="mk">▸</span><div>Uma rota de <b>login</b> que confere email e senha</div></div>
+      <div class="row"><span class="mk">▸</span><div>O <b>JWT</b>: o "crachá" que o login entrega</div></div>
+      <div class="row"><span class="mk">▸</span><div>Um <b>middleware</b> que confere o crachá antes da rota</div></div>
+    </div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Apresentar os três assuntos da aula e como eles se encaixam: o login entrega o token, o middleware confere o token.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Pergunte: "hoje, o que impede alguém de chamar DELETE /usuario/:id e apagar qualquer usuário?" Resposta: nada. É isso que começamos a resolver.</li><li>Lembre que a tabela já se chama <b>usuario</b> e as rotas usam o prefixo <b>/usuario</b>.</li></ul>
+<h4>TEMPO</h4><p class="time">~3 min</p></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span class="sq"></span>O PROBLEMA</div>
+    <h2>O HTTP não tem memória</h2>
+    <div class="sub" data-step="1" style="max-width:44ch">Cada requisição chega <b>sozinha</b>. O servidor não lembra quem fez a requisição anterior.</div>
+    <div class="grid2" data-step="2">
+      <div class="panel"><span class="cap">SEM CRACHÁ</span>Mandar email e senha em <span style="color:var(--c-op)">toda</span> requisição. Chato e perigoso: a senha fica viajando o tempo todo.</div>
+      <div class="panel"><span class="cap">COM CRACHÁ</span>Manda email e senha <span style="color:var(--green)">uma vez</span>, recebe um token e mostra o token nas próximas.</div>
+    </div>
+    <div class="panel accent" data-step="3"><span class="cap">PENSA ASSIM</span>Show com pulseira: na entrada você mostra o ingresso e o documento <b>uma vez</b> e ganha uma pulseira. Daí pra frente, o segurança só olha a pulseira.</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Criar a necessidade do token antes de mostrar código: o HTTP é "stateless", cada requisição é independente.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Use a analogia da pulseira a aula toda: login = mostrar o ingresso, token = pulseira, middleware = segurança na porta.</li><li>Não precisa usar a palavra "stateless" se a turma estranhar; "o servidor não lembra" basta.</li></ul>
+<h4>TEMPO</h4><p class="time">~4 min</p></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span class="sq"></span>A IDEIA</div>
+    <h2>Dois momentos</h2>
+    <div class="lead" data-step="1" style="font-size:clamp(14px,2vw,24px)"><span class="num" style="display:inline-flex;margin-right:10px">1</span>Login: troca email + senha por um token</div>
+    <div class="diagram" data-step="1">
+      <div class="node"><span class="ic">☺</span>cliente</div>
+      <div class="arrows">
+        <div class="arrow"><span class="line"></span><span class="tip">▶</span><span class="lbl">POST /auth/login · email + senha</span></div>
+        <div class="arrow back"><span class="line"></span><span class="tip">◀</span><span class="lbl">{ token }</span></div>
+      </div>
+      <div class="node"><span class="ic">▣</span>API</div>
+    </div>
+    <div class="lead" data-step="2" style="font-size:clamp(14px,2vw,24px)"><span class="num" style="display:inline-flex;margin-right:10px">2</span>Depois: toda requisição leva o token</div>
+    <div class="diagram" data-step="2">
+      <div class="node"><span class="ic">☺</span>cliente</div>
+      <div class="arrows">
+        <div class="arrow"><span class="line"></span><span class="tip">▶</span><span class="lbl">GET /auth/me · Bearer token</span></div>
+        <div class="arrow back"><span class="line"></span><span class="tip">◀</span><span class="lbl">dados do usuário</span></div>
+      </div>
+      <div class="node"><span class="ic">▣</span>API</div>
+    </div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Dar a imagem mental do fluxo inteiro antes de abrir qualquer arquivo.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Momento 1 acontece uma vez. Momento 2 acontece em toda requisição protegida.</li><li>Quem guarda o token é o cliente (o front-end, o app, ou o requests.http). O servidor não guarda nada.</li></ul>
+<h4>TEMPO</h4><p class="time">~4 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>ANTES DO LOGIN</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Senha nunca vai pura pro banco</h2>
+    <div class="sub" data-step="1" style="max-width:52ch">Se o banco vazar, ninguém pode ler as senhas. Por isso a coluna se chama <b>senha_hash</b>.</div>
+    <div class="output" data-step="2" style="gap:1px;font-size:clamp(10px,1.35vw,16px);padding:10px 16px">
+      <span class="bar">▤ src/routes/users.routes.ts · POST /usuario</span>
+      <span><span style="color:var(--c-kw)">import</span> bcrypt <span style="color:var(--c-kw)">from</span> <span style="color:var(--c-strq)">"bcryptjs"</span></span>
+      <span>&nbsp;</span>
+      <span><span style="color:var(--c-kw)">const</span> senha_hash = <span style="color:var(--c-kw)">await</span> bcrypt.<span style="color:var(--c-func)">hash</span>(password, <span style="color:var(--blue)">8</span>)</span>
+      <span><span style="color:var(--c-kw)">const</span> user = { usuario_id: <span style="color:var(--c-func)">randomUUID</span>(), name, email, <span style="color:var(--accent)">senha_hash</span> }</span>
+    </div>
+    <div class="output" data-step="3" style="gap:2px;font-size:clamp(10px,1.35vw,16px);padding:10px 16px">
+      <span class="bar">▤ o que fica salvo</span>
+      <span><span style="color:var(--c-strq)">"9999"</span> <span style="color:var(--muted)">──hash──▶</span> <span class="val">$2b$08$aspHpIT8...KcLO3m</span></span>
+    </div>
+    <div class="anatomy-cap" style="gap:5px">
+      <div class="row" data-step="4" style="font-size:clamp(12px,1.6vw,18px)"><span class="blk blk-func chip" data-term="hash" tabindex="0" role="button" aria-haspopup="dialog" style="padding:3px 9px">hash</span><div>só tem ida: do hash não dá pra voltar pra senha</div></div>
+      <div class="row" data-step="5" style="font-size:clamp(12px,1.6vw,18px)"><span class="blk blk-kw chip" style="padding:3px 9px">compare</span><div>no login, o bcrypt compara a senha digitada com o hash</div></div>
+    </div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Garantir que o cadastro salva o hash, senão o login não tem com o que comparar.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Instalação: <b>npm install bcryptjs</b>. É a versão em JavaScript puro, não precisa compilar nada (o "bcrypt" sem js precisa do Build Tools no Windows).</li><li>O <b>8</b> é o "custo": quanto maior, mais lento pra gerar (e pra um atacante testar senhas). 8 a 10 é ok pra aula.</li><li>Faça o POST /usuario e mostre no GET que a senha virou um texto estranho começando com $2b$.</li><li>O PUT também precisa gerar o hash quando troca a senha.</li></ul>
+<h4>ERROS QUE APARECEM</h4><ul><li>Usuários criados antes desta aula têm senha sem hash: o login deles sempre dá 401. Crie um usuário novo.</li></ul>
+<h4>TEMPO</h4><p class="time">~7 min</p></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span class="sq"></span>UM AVISO SOBRE O NOME</div>
+    <h2>Hash não é criptografia</h2>
+    <div class="grid2" data-step="1">
+      <div class="panel"><span class="cap">CRIPTOGRAFIA</span>Uma tranca com chave: quem tem a chave <span style="color:var(--blue)">abre</span> e lê o original. Tem ida e volta.</div>
+      <div class="panel"><span class="cap">HASH</span>Um moedor de carne: o bife vira carne moída e <span style="color:var(--c-op)">nunca mais volta</span> a ser bife. Só tem ida.</div>
+    </div>
+    <div class="lead" data-step="2">Pra senha a gente usa <b>hash</b>: nem a própria API sabe a senha original.</div>
+    <div class="panel accent" data-step="3"><span class="cap">NO DIA A DIA</span><span style="color:var(--ink)">Muita gente fala "criptografar a senha". O nome certo é <b>gerar o hash</b> da senha.</span></div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Desfazer a confusão de nomes antes de explicar como o bcrypt funciona.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Pergunte: "a API precisa saber a senha original de alguém?" Não: no login ela só precisa saber se a senha digitada é a mesma. Pra isso, comparar hashes basta.</li><li>Por que não criptografar? Porque a chave teria que ficar guardada na API. Se o banco e a chave vazarem juntos, todas as senhas aparecem. Com hash não existe chave pra vazar.</li><li>Vocês vão ouvir "senha criptografada" o tempo todo, inclusive de gente experiente. Tudo bem entender o que a pessoa quis dizer, mas no código e na prova o nome é hash.</li></ul>
+<h4>TEMPO</h4><p class="time">~4 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>O PROBLEMA DO HASH SIMPLES</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Mesma senha, mesmo hash</h2>
+    <div class="output" data-step="1" style="gap:2px;font-size:clamp(10px,1.3vw,15px);padding:10px 16px">
+      <span class="bar">▤ tabela usuario · com um hash simples (SHA-256)</span>
+      <span><span style="color:var(--muted)">ana  </span> · <span style="color:var(--c-strq)">"123456"</span> <span style="color:var(--muted)">──▶</span> <span style="color:var(--c-op)">8d969eef6ecad3c29a3a629280e686cf...</span></span>
+      <span><span style="color:var(--muted)">bruno</span> · <span style="color:var(--c-strq)">"123456"</span> <span style="color:var(--muted)">──▶</span> <span style="color:var(--c-op)">8d969eef6ecad3c29a3a629280e686cf...</span></span>
+    </div>
+    <div class="rows" style="gap:8px">
+      <div class="row" data-step="2" style="font-size:clamp(12px,1.7vw,20px)"><span class="mk">▸</span><div>Quem vê o banco descobre que a ana e o bruno usam <b>a mesma senha</b>.</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.7vw,20px)"><span class="mk">▸</span><div>Pior: existem <b>listas prontas</b> com o hash das senhas mais comuns. Achou <span style="color:var(--c-op)">8d969eef...</span>? É <b>123456</b>.</div></div>
+      <div class="row" data-step="4" style="font-size:clamp(12px,1.7vw,20px)"><span class="mk">▸</span><div>E o SHA-256 é <b>rápido demais</b>: um computador testa bilhões de senhas por segundo.</div></div>
+    </div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Mostrar os dois problemas que o bcrypt resolve: hashes iguais pra senhas iguais, e velocidade.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Esse hash é real: é o SHA-256 de "123456". Pesquise "8d969eef6ecad3c29a3a629280e686cf" no Google e a senha aparece. Isso é uma "rainbow table" na prática.</li><li>O hash em si não tem defeito: o problema é que todo mundo que usa "123456" ganha exatamente o mesmo resultado.</li><li>Guarde os dois problemas: o próximo slide resolve o primeiro (salt) e o seguinte resolve o segundo (custo).</li></ul>
+<h4>TEMPO</h4><p class="time">~5 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>A SOLUÇÃO 1</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">O sal: um tempero aleatório</h2>
+    <div class="sub" data-step="1" style="max-width:52ch">Antes de gerar o hash, o bcrypt sorteia um <span class="blk blk-tag chip" data-term="salt" tabindex="0" role="button" aria-haspopup="dialog" style="padding:2px 8px">salt</span>: um texto aleatório, diferente pra cada senha.</div>
+    <div class="output" data-step="2" style="gap:1px;font-size:clamp(11px,1.5vw,18px);padding:10px 16px">
+      <span class="bar">▤ a ideia</span>
+      <span><span style="color:var(--c-func)">hash</span>( <span style="color:var(--c-strq)">senha</span> + <span style="color:var(--c-tag)">salt</span> )</span>
+    </div>
+    <div class="output" data-step="3" style="gap:2px;font-size:clamp(9px,1.2vw,14px);padding:10px 16px;word-break:break-all;max-width:min(100%,920px)">
+      <span class="bar">▤ bcrypt.hash("9999", 8) rodado duas vezes</span>
+      <span>$2b$08$<span style="color:var(--c-tag)">aspHpIT8qMnxYUDkCRQ48u</span><span style="color:var(--green)">Z69gtIdTOuZkV1LHteALMTv9IKcLO3m</span></span>
+      <span>$2b$08$<span style="color:var(--c-tag)">KcRRY1.5e2IWBI54FrPH9O</span><span style="color:var(--green)">NXgWB6GGZsC1znxRq2PcB0bKHbSSDBW</span></span>
+    </div>
+    <div class="lead" data-step="4" style="font-size:clamp(14px,2vw,24px)">Mesma senha, hashes <b>diferentes</b>. As listas prontas não servem mais.</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Mostrar o salt resolvendo o problema do slide anterior.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Esses dois hashes são reais: a mesma senha "9999", gerada duas vezes. A parte em verde-água é o salt sorteado; a parte em verde é o hash.</li><li>Faça ao vivo: crie dois usuários com a mesma senha no POST /usuario e mostre no GET que o senha_hash dos dois é diferente.</li><li>O salt <b>não é secreto</b>: ele fica guardado junto, dentro do próprio senha_hash. Ele não serve pra esconder nada, serve pra deixar cada hash único.</li><li>Analogia: duas pessoas fazem o mesmo bolo (a senha), mas cada uma joga um tempero sorteado diferente. Os bolos saem com gosto diferente.</li></ul>
+<h4>TEMPO</h4><p class="time">~6 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>A SOLUÇÃO 2</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">O que tem dentro do senha_hash</h2>
+    <div class="output" data-step="1" style="gap:1px;font-size:clamp(10px,1.4vw,17px);padding:10px 16px;word-break:break-all;max-width:min(100%,920px)">
+      <span class="bar">▤ um senha_hash de verdade</span>
+      <span><span style="color:var(--c-op)">$2b$</span><span style="color:#b48ef0">08</span>$<span style="color:var(--c-tag)">aspHpIT8qMnxYUDkCRQ48u</span><span style="color:var(--green)">Z69gtIdTOuZkV1LHteALMTv9IKcLO3m</span></span>
+    </div>
+    <div class="rows" style="gap:7px">
+      <div class="row" data-step="2" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-op)">$2b$</span><div>a versão do algoritmo: bcrypt</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-var)">08</span><div>o <b>custo</b>: 2⁸ = 256 voltas no moedor</div></div>
+      <div class="row" data-step="4" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-tag);color:var(--c-tag-t)">salt</span><div>22 caracteres sorteados</div></div>
+      <div class="row" data-step="5" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--green);color:#08221d">hash</span><div>31 caracteres: o resultado de verdade</div></div>
+    </div>
+    <div class="panel accent" data-step="6"><span class="cap">O CUSTO DEIXA LENTO DE PROPÓSITO</span><span style="color:var(--ink)">custo 8 ≈ 17 ms · custo 10 ≈ 68 ms · custo 12 ≈ 265 ms · custo 14 ≈ 1 s<br>Pra API, 17 ms num login não é nada. Pra quem tenta milhões de senhas, vira uma eternidade.</span></div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Ler o senha_hash pedaço por pedaço e explicar o número 8 do bcrypt.hash(password, 8).</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Os tempos foram medidos de verdade com o bcryptjs, no computador onde a aula foi preparada (no de vocês pode variar um pouco). Cada +1 no custo dobra o tempo.</li><li>Isso resolve o segundo problema do SHA-256 (rápido demais): o bcrypt é lento de propósito, e dá pra deixar mais lento conforme os computadores ficam mais rápidos.</li><li>Em produção se usa 10 a 12. Usamos 8 na aula pra ficar rápido.</li><li>Repare que tudo que o bcrypt precisa pra conferir a senha depois (versão, custo e salt) está dentro desse texto. É o assunto do próximo slide.</li></ul>
+<h4>TEMPO</h4><p class="time">~6 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>E NO LOGIN?</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Como o compare confere a senha</h2>
+    <div class="rows" style="gap:8px">
+      <div class="row" data-step="1" style="font-size:clamp(12px,1.7vw,20px)"><span class="num">1</span><div>Lê o <b>custo</b> e o <b>salt</b> de dentro do senha_hash salvo</div></div>
+      <div class="row" data-step="2" style="font-size:clamp(12px,1.7vw,20px)"><span class="num">2</span><div>Gera o hash da senha <b>digitada</b> com esse mesmo salt e custo</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.7vw,20px)"><span class="num">3</span><div>Compara os dois resultados: iguais = senha certa</div></div>
+    </div>
+    <div class="output" data-step="4" style="gap:2px;font-size:clamp(10px,1.35vw,16px);padding:10px 16px">
+      <span class="bar">▤ testando de verdade</span>
+      <span><span style="color:var(--c-kw)">await</span> bcrypt.<span style="color:var(--c-func)">compare</span>(<span style="color:var(--c-strq)">"9999"</span>, senha_hash) <span style="color:var(--muted)">// </span><span class="val">true</span></span>
+      <span><span style="color:var(--c-kw)">await</span> bcrypt.<span style="color:var(--c-func)">compare</span>(<span style="color:var(--c-strq)">"1234"</span>, senha_hash) <span style="color:var(--muted)">// </span><span style="color:var(--c-op)">false</span></span>
+    </div>
+    <div class="lead" data-step="5" style="font-size:clamp(14px,2vw,24px)">Por isso o salt não precisa de outra coluna: ele já mora <b>dentro</b> do hash.</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Fechar o assunto senha explicando a linha do bcrypt.compare que vai aparecer na rota de login.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Reforce: o compare nunca "desfaz" o hash. Ele faz o hash de novo e compara. Hash só tem ida.</li><li>Pergunta pra turma: "se eu trocar o custo pra 10 no código, os usuários antigos (custo 8) ainda conseguem logar?" Sim: o custo de cada um está guardado no próprio hash.</li></ul>
+<h4>TEMPO</h4><p class="time">~4 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>O CRACHÁ</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">O que é um JWT?</h2>
+    <div class="sub" data-step="1" style="max-width:52ch"><b>JSON Web Token</b>: um texto em três partes, separadas por ponto.</div>
+    <div class="output" data-step="2" style="gap:1px;font-size:clamp(9px,1.2vw,14px);padding:10px 16px;word-break:break-all;max-width:min(100%,920px)">
+      <span class="bar">▤ um token de verdade</span>
+      <span><span style="color:var(--c-op)">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span><span style="color:var(--ink)">.</span><span style="color:#b48ef0">eyJzdWIiOiJiZTM0NzU1MSIsInBlcmZpbCI6ImFydGlzdGEiLCJpYXQiOjE3NjQwMDAwMDAsImV4cCI6MTc2NDA4NjQwMH0</span><span style="color:var(--ink)">.</span><span style="color:var(--c-go)">WS81zkMMO71MVXO1Irl8-_fc8UYogpFtmp8xwH6swfU</span></span>
+    </div>
+    <div class="anatomy-cap" style="gap:6px">
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-op)">header</span><div>qual algoritmo assinou <small>{ "alg": "HS256" }</small></div></div>
+      <div class="row" data-step="4" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-var)">payload</span><div>os dados <small>{ "sub": "be347551", "perfil": "artista", "exp": ... }</small></div></div>
+      <div class="row" data-step="5" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-go);color:var(--c-go-t)">assinatura</span><div>a prova de que <b>foi a nossa API</b> que criou, feita com o <span class="blk blk-var chip" data-term="secret" tabindex="0" role="button" aria-haspopup="dialog" style="padding:2px 8px">JWT_SECRET</span></div></div>
+    </div>
+    <div class="panel" data-step="6" style="color:#e78a70;background:rgba(207,74,58,.1)"><span class="cap">CUIDADO</span>O payload <b>não é secreto</b>: qualquer um consegue ler. Nunca coloque senha no token.</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Desmistificar o token: é só um JSON codificado + uma assinatura.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Aqui é só a visão geral das três partes. Os 4 slides seguintes ("Por dentro do JWT") explicam por que o jwt.io lê o token e como a assinatura é conferida.</li><li><b>sub</b> = subject, o dono do token (o id do usuário). <b>iat</b> = quando foi criado. <b>exp</b> = quando expira.</li></ul>
+<h4>TEMPO</h4><p class="time">~7 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>POR DENTRO DO JWT · 1</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Por que o jwt.io lê o token?</h2>
+    <div class="output" data-step="1" style="gap:2px;font-size:clamp(9px,1.2vw,14px);padding:10px 16px;word-break:break-all;max-width:min(100%,920px)">
+      <span class="bar">▤ a parte do meio do token (payload)</span>
+      <span style="color:#b48ef0">eyJzdWIiOiJiZTM0NzU1MSIsInBlcmZpbCI6ImFydGlzdGEiLCJpYXQiOjE3NjQwMDAwMDAsImV4cCI6MTc2NDA4NjQwMH0</span>
+      <span style="color:var(--muted)">▼ decode (base64)</span>
+      <span class="val">{"sub":"be347551","perfil":"artista","iat":1764000000,"exp":1764086400}</span>
+    </div>
+    <div class="rows" style="gap:8px">
+      <div class="row" data-step="2" style="font-size:clamp(12px,1.7vw,20px)"><span class="mk">▸</span><div><span class="blk blk-str chip" data-term="base64" tabindex="0" role="button" aria-haspopup="dialog" style="padding:2px 8px">base64</span> é só <b>outro jeito de escrever</b> o mesmo texto, com letras que viajam bem na internet.</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.7vw,20px)"><span class="mk">▸</span><div>Não tem chave nenhuma: <b>qualquer pessoa</b> desfaz. É exatamente isso que o "decode" do jwt.io faz.</div></div>
+    </div>
+    <div class="panel" data-step="4" style="color:#e78a70;background:rgba(207,74,58,.1)"><span class="cap">CODIFICAR ≠ CRIPTOGRAFAR</span>O token não esconde nada. Por isso: nada de senha, CPF ou dado sensível no payload.</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Responder a pergunta que sempre aparece: "se dá pra ler no jwt.io, cadê a segurança?". A segurança do JWT não está em esconder, está em não deixar alterar (próximos slides).</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Demonstração sem site nenhum: no console do navegador (F12), rode <b>atob("eyJzdWIi...")</b> com a parte do meio do token. O JSON aparece. (Com esse token funciona; alguns tokens têm - ou _ e aí o atob reclama, porque o JWT usa uma variação do base64.)</li><li>Faça o mesmo com o header (a primeira parte): aparece {"alg":"HS256","typ":"JWT"}.</li><li>iat e exp são datas em segundos desde 1970 (timestamp). Dá pra converter em sites como epochconverter.com.</li><li>Ligue com o slide do hash: hash não volta, base64 volta pra qualquer um. São coisas bem diferentes.</li></ul>
+<h4>TEMPO</h4><p class="time">~5 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>POR DENTRO DO JWT · 2</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Como a assinatura nasce</h2>
+    <div class="output" data-step="1" style="gap:1px;font-size:clamp(11px,1.5vw,18px);padding:10px 16px">
+      <span class="bar">▤ a receita (HS256)</span>
+      <span><span style="color:var(--c-go)">assinatura</span> = <span style="color:var(--c-func)">HMAC-SHA256</span>( <span style="color:var(--c-op)">header</span> + <span style="color:var(--c-strq)">"."</span> + <span style="color:#b48ef0">payload</span> , <span style="color:var(--accent)">JWT_SECRET</span> )</span>
+    </div>
+    <div class="rows" style="gap:7px">
+      <div class="row" data-step="2" style="font-size:clamp(11px,1.5vw,17px)"><span class="vtag" style="background:var(--c-op)">header</span><div style="word-break:break-all">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</div></div>
+      <div class="row" data-step="2" style="font-size:clamp(11px,1.5vw,17px)"><span class="vtag" style="background:var(--c-var)">payload</span><div style="word-break:break-all">eyJzdWIiOiJiZTM0NzU1MSIsInBlcmZp...</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(11px,1.5vw,17px)"><span class="vtag" style="background:var(--accent);color:#241a05">secret</span><div>"segredo" <small>(só a API sabe)</small></div></div>
+      <div class="row" data-step="4" style="font-size:clamp(11px,1.5vw,17px)"><span class="vtag" style="background:var(--c-go);color:var(--c-go-t)">resultado</span><div style="word-break:break-all;color:var(--c-go)">WS81zkMMO71MVXO1Irl8-_fc8UYogpFtmp8xwH6swfU</div></div>
+    </div>
+    <div class="lead" data-step="5" style="font-size:clamp(13px,1.9vw,22px)">É um <span class="blk blk-func chip" data-term="hmac" tabindex="0" role="button" aria-haspopup="dialog" style="padding:2px 8px">hash</span> que mistura o conteúdo com a secret. Muda uma letra de qualquer um dos dois e a assinatura sai <b>totalmente</b> diferente.</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Mostrar que a terceira parte do token não é mágica: é um hash do conteúdo misturado com a secret.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Esses valores são reais: com a secret "segredo", essa é exatamente a assinatura do token do slide "O que é um JWT?".</li><li>É o mesmo "HS256" que aparece no header: HMAC com SHA-256. É ele que o reply.jwtSign usa por baixo.</li><li>Ligue com a aula de senha: lá o salt deixava cada hash único; aqui a secret deixa a assinatura impossível de fabricar sem ela.</li><li>Sem a secret, dá pra ler o token (é só base64), mas não dá pra gerar uma assinatura que bata.</li></ul>
+<h4>TEMPO</h4><p class="time">~5 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>POR DENTRO DO JWT · 3</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">O que o jwtVerify faz</h2>
+    <div class="rows" style="gap:8px">
+      <div class="row" data-step="1" style="font-size:clamp(12px,1.7vw,20px)"><span class="num">1</span><div>Separa as três partes do token pelo ponto</div></div>
+      <div class="row" data-step="2" style="font-size:clamp(12px,1.7vw,20px)"><span class="num">2</span><div><b>Recalcula</b> a assinatura com o header + payload que chegaram e a <b>sua</b> secret</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.7vw,20px)"><span class="num">3</span><div>Compara com a assinatura que veio no token: diferente = <span style="color:var(--c-op)">401</span></div></div>
+      <div class="row" data-step="4" style="font-size:clamp(12px,1.7vw,20px)"><span class="num">4</span><div>Confere o <b>exp</b>: já passou da validade = <span style="color:var(--c-op)">401</span></div></div>
+    </div>
+    <div class="panel accent" data-step="5"><span class="cap">O JWT.IO FAZ O MESMO</span><span style="color:var(--ink)">Quando você cola a secret no site, ele recalcula a assinatura com ela e diz se bate. É o passo 2 e 3, feito no navegador.</span></div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Explicar o que acontece dentro do request.jwtVerify(), que até aqui era uma caixa-preta.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Repare que a API <b>não guarda</b> os tokens que criou. Ela não precisa: com a secret, ela consegue conferir qualquer token na hora. Por isso o JWT é chamado de "stateless".</li><li>Consequência: não dá pra "cancelar" um token antes do exp só com isso. Por isso o expiresIn não deve ser longo demais.</li><li>Se trocar o JWT_SECRET no .env, todos os tokens antigos param de valer: a assinatura recalculada não bate mais com nenhum.</li></ul>
+<h4>TEMPO</h4><p class="time">~5 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>POR DENTRO DO JWT · 4</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Três cenários no jwt.io</h2>
+    <div class="rows" style="gap:12px">
+      <div class="row" data-step="1" style="font-size:clamp(11px,1.5vw,18px)"><span class="vtag" style="background:var(--green);color:#08221d">válido</span><div>token original + secret <b>"segredo"</b><br><small>recalculada <span style="color:var(--c-go)">WS81zkMM...</span> = <span style="color:var(--c-go)">WS81zkMM...</span> do token</small></div></div>
+      <div class="row" data-step="2" style="font-size:clamp(11px,1.5vw,18px)"><span class="vtag" style="background:var(--c-op)">secret errada</span><div>token original + secret <b>"outro"</b><br><small>recalculada <span style="color:var(--c-op)">8QK_bSgt...</span> ≠ <span style="color:var(--c-go)">WS81zkMM...</span> do token</small></div></div>
+      <div class="row" data-step="3" style="font-size:clamp(11px,1.5vw,18px)"><span class="vtag" style="background:var(--c-op)">alterado</span><div>alguém troca <b>"artista"</b> por <b>"admin"</b> no payload e mantém a assinatura antiga<br><small>recalculada <span style="color:var(--c-op)">6CutCupw...</span> ≠ <span style="color:var(--c-go)">WS81zkMM...</span> do token</small></div></div>
+    </div>
+    <div class="lead" data-step="4" style="font-size:clamp(14px,2vw,24px)">Ler, qualquer um lê. <span style="color:var(--accent)">Alterar sem a secret, ninguém consegue sem ser pego.</span></div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Ver a assinatura funcionando nos três casos que importam.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Os valores são reais (calculados com o token do slide "O que é um JWT?").</li><li>Demonstração ao vivo, melhor com um token de vocês: faça login pelo requests.http, cole o token no jwt.io e cole o JWT_SECRET do seu .env no campo da secret. A assinatura aparece como verificada.</li><li>Troque uma letra da secret: a assinatura passa a ser inválida.</li><li>Edite o payload no site (troque o perfil): o site assina de novo com a secret que estiver no campo. Se não for a do seu .env, a API recusa com 401. Mesma coisa se você trocar só o payload e mantiver a assinatura antiga.</li><li>O token de exemplo do slide é de 2025, então o jwt.io pode avisar que ele expirou. A assinatura continua sendo conferida do mesmo jeito; a nossa API recusaria pelo exp.</li></ul>
+<h4>TEMPO</h4><p class="time">~7 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:10px">
+    <div class="eyebrow"><span class="sq"></span>PREPARANDO O PROJETO</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Instalando e ligando o JWT</h2>
+    <div class="output" data-step="1" style="gap:1px;font-size:clamp(10px,1.3vw,15px);padding:9px 16px">
+      <span class="bar">▤ terminal</span>
+      <span class="val">npm install @fastify/jwt bcryptjs</span>
+    </div>
+    <div class="codes">
+      <div class="output" data-step="2" style="gap:1px;font-size:clamp(9px,1.2vw,14px);padding:9px 15px">
+        <span class="bar">▤ .env</span>
+        <span>JWT_SECRET=<span style="color:var(--c-strq)">uma-frase-bem-grande-e-dificil</span></span>
+      </div>
+      <div class="output" data-step="3" style="gap:1px;font-size:clamp(9px,1.2vw,14px);padding:9px 15px">
+        <span class="bar">▤ src/shared/env/environments.ts</span>
+        <span>PORT: z.coerce.number().default(<span style="color:var(--blue)">3333</span>),</span>
+        <span>DB_FILE: z.string(),</span>
+        <span style="color:var(--accent)">JWT_SECRET: z.string(),</span>
+      </div>
+    </div>
+    <div class="output" data-step="4" style="gap:1px;font-size:clamp(9px,1.2vw,14px);padding:9px 15px">
+      <span class="bar">▤ src/server.ts</span>
+      <span><span style="color:var(--c-kw)">import</span> jwt <span style="color:var(--c-kw)">from</span> <span style="color:var(--c-strq)">"@fastify/jwt"</span></span>
+      <span>&nbsp;</span>
+      <span style="color:var(--accent)">app.register(jwt, { secret: env.JWT_SECRET })</span>
+      <span>&nbsp;</span>
+      <span>app.register(usersRoutes, { prefix: <span style="color:var(--c-strq)">"/usuario"</span> })</span>
+      <span>app.register(authRoutes, { prefix: <span style="color:var(--c-strq)">"/auth"</span> })</span>
+    </div>
+    <div class="lead" data-step="5" style="font-size:clamp(13px,1.8vw,21px)">O plugin do JWT dá superpoderes ao app: <b>reply.jwtSign()</b> e <b>request.jwtVerify()</b>.</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Deixar o projeto pronto: duas libs, uma variável de ambiente e um register.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>O JWT_SECRET é como a senha da API: fica no .env, que não vai pro Git (confira o .gitignore). Cada aluno inventa o seu.</li><li>O zod obriga a variável a existir: sem ela no .env, o servidor nem sobe ("Invalid environment variables"). Isso é bom: erro cedo.</li><li>Costume: registrar o jwt antes das rotas. Não é obrigatório (funciona nas duas ordens), mas quem lê o server.ts de cima pra baixo vê primeiro o que as rotas vão usar.</li><li>O authRoutes ainda não existe: é o próximo slide.</li></ul>
+<h4>TEMPO</h4><p class="time">~8 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>POR QUE NO SERVER.TS?</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Configura uma vez, vale pra API toda</h2>
+    <div class="rows" style="gap:8px">
+      <div class="row" data-step="1" style="font-size:clamp(12px,1.6vw,19px)"><span class="num">1</span><div><b>.env</b> guarda o segredo <small>JWT_SECRET=...</small></div></div>
+      <div class="row" data-step="2" style="font-size:clamp(12px,1.6vw,19px)"><span class="num">2</span><div><b>environments.ts</b> lê o .env (dotenv) e confere com o zod <small>env.JWT_SECRET</small></div></div>
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.6vw,19px)"><span class="num">3</span><div><b>server.ts</b> entrega o segredo pro plugin, <span style="color:var(--accent)">uma vez só</span> <small>app.register(jwt, { secret })</small></div></div>
+      <div class="row" data-step="4" style="font-size:clamp(12px,1.6vw,19px)"><span class="num">4</span><div><b>todas as rotas</b> já usam o jwt configurado <small>jwtSign e jwtVerify</small></div></div>
+    </div>
+    <div class="codes" data-step="5">
+      <div class="output" style="gap:1px;font-size:clamp(9px,1.2vw,14px);padding:9px 15px">
+        <span class="bar">▤ auth.routes.ts</span>
+        <span><span style="color:var(--c-kw)">await</span> reply.<span style="color:var(--c-func)">jwtSign</span>(payload)</span>
+        <span style="color:var(--green)">// nenhum secret aqui</span>
+      </div>
+      <div class="output" style="gap:1px;font-size:clamp(9px,1.2vw,14px);padding:9px 15px">
+        <span class="bar">▤ verificar-token.ts</span>
+        <span><span style="color:var(--c-kw)">await</span> request.<span style="color:var(--c-func)">jwtVerify</span>()</span>
+        <span style="color:var(--green)">// nem aqui</span>
+      </div>
+    </div>
+    <div class="panel accent" data-step="6"><span class="cap">POR QUE VALE EM TODO LUGAR?</span><span style="color:var(--ink)">O <b>@fastify/jwt</b> é um plugin <b>compartilhado</b>: o que ele acrescenta no app fica disponível no <b>app inteiro</b>: em todos os arquivos de rota, sem passar o segredo de novo.</span></div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Responder a pergunta "como a rota de login sabe qual é o segredo, se a gente não passou ele lá?". O segredo é configurado num lugar só e vale pra API inteira.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Siga o caminho do segredo com o dedo: .env → environments.ts → server.ts → plugin. Depois disso, nenhum arquivo de rota toca no segredo.</li><li>Lembre da aula de rotas: lá vimos que um plugin é uma função que recebe o app. Normalmente o que um plugin cria fica só dentro dele. O @fastify/jwt é diferente: ele usa o <b>fastify-plugin</b>, que faz o que ele cria (jwtSign, jwtVerify) ficar visível pro app todo.</li><li>Vantagens: o segredo fica num lugar só (se trocar no .env, troca em toda a API), e nunca aparece escrito no código que vai pro Git.</li><li>Teste rápido: comente a linha do app.register(jwt) e rode o login. Vem 500 com "reply.jwtSign is not a function": sem o register, ninguém configurou o JWT. Descomente e funciona de novo.</li></ul>
+<h4>TEMPO</h4><p class="time">~5 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:10px">
+    <div class="eyebrow"><span class="sq"></span>MÃO NA MASSA · TODO MUNDO JUNTO</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">A rota de login</h2>
+    <div class="output" data-step="1" style="gap:1px;font-size:clamp(9px,1.15vw,13.5px);padding:9px 15px">
+      <span class="bar">▤ src/routes/auth.routes.ts</span>
+      <span><span style="color:var(--c-kw)">export async function</span> <span style="color:var(--c-func)">authRoutes</span>(app: FastifyInstance) {</span>
+      <span>&nbsp;&nbsp;app.<span style="color:var(--c-func)">post</span>(<span style="color:var(--c-strq)">"/login"</span>, async (request, reply) =&gt; {</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">const</span> { email, password } = request.body <span style="color:var(--c-kw)">as</span> LoginBody</span>
+      <span>&nbsp;</span>
+      <span style="color:var(--green)">&nbsp;&nbsp;&nbsp;&nbsp;// 1. Procura o usuário pelo email</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">const</span> usuario = <span style="color:var(--c-kw)">await</span> connection(<span style="color:var(--c-strq)">"usuario"</span>).where({ email }).first()</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">if</span> (!usuario) {</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">return</span> reply.status(<span style="color:var(--blue)">401</span>).send({ message: <span style="color:var(--c-strq)">"Email ou senha inválidos"</span> })</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+      <span>&nbsp;</span>
+      <span style="color:var(--green)">&nbsp;&nbsp;&nbsp;&nbsp;// 2. Compara a senha digitada com o hash do banco</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">const</span> senhaCorreta = <span style="color:var(--c-kw)">await</span> bcrypt.<span style="color:var(--c-func)">compare</span>(password, usuario.senha_hash)</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">if</span> (!senhaCorreta) {</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">return</span> reply.status(<span style="color:var(--blue)">401</span>).send({ message: <span style="color:var(--c-strq)">"Email ou senha inválidos"</span> })</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;}</span>
+      <span>&nbsp;</span>
+      <span style="color:var(--green)">&nbsp;&nbsp;&nbsp;&nbsp;// 3. Deu tudo certo: monta o token</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">const</span> payload = { sub: usuario.usuario_id, perfil: usuario.perfil }</span>
+      <span style="color:var(--accent)">&nbsp;&nbsp;&nbsp;&nbsp;const token = await reply.jwtSign(payload, { expiresIn: "1d" })</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">return</span> { token }</span>
+      <span>&nbsp;&nbsp;})</span>
+      <span>}</span>
+    </div>
+    <div class="anatomy-cap" style="gap:5px">
+      <div class="row" data-step="2" style="font-size:clamp(11px,1.5vw,17px)"><span class="vtag" style="background:var(--c-op)">401</span><div>Unauthorized: "não sei quem é você"</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(11px,1.5vw,17px)"><span class="blk blk-func chip" data-term="jwtsign" tabindex="0" role="button" aria-haspopup="dialog" style="padding:3px 9px">jwtSign</span><div>cria e assina o token com o payload</div></div>
+      <div class="row" data-step="4" style="font-size:clamp(11px,1.5vw,17px)"><span class="blk blk-strq chip" style="padding:3px 9px;color:var(--c-strq-t)">"1d"</span><div>o token vale 1 dia; depois disso o usuário faz login de novo</div></div>
+    </div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Escrever a rota de login em três passos bem separados: procura, compara, assina.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Escreva um passo de cada vez e leia o comentário em voz alta antes do código.</li><li>Pergunte: "por que as duas mensagens de erro são iguais?" Se a API dissesse "email não existe", um atacante descobriria quais emails têm conta. Mensagem igual não entrega nada.</li><li>Os imports do arquivo: FastifyInstance (type), bcrypt de "bcryptjs" e connection de "../config/database.js".</li><li>O tipo LoginBody é igual ao UserBody da aula passada: { email: string, password: string }.</li></ul>
+<h4>ERROS QUE APARECEM</h4><ul><li><b>reply.jwtSign is not a function</b>: esqueceu o app.register(jwt) no server.ts. A resposta vem 500.</li></ul>
+<h4>TEMPO</h4><p class="time">~12 min</p></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span class="sq"></span>TESTANDO O LOGIN</div>
+    <h2>Ganhando o crachá</h2>
+    <div class="codes">
+      <div class="output" data-step="1" style="gap:1px;font-size:clamp(10px,1.3vw,15px);padding:10px 16px">
+        <span class="bar">▤ requests.http</span>
+        <span style="color:var(--muted)"># @name login</span>
+        <span class="val">POST {{baseUrl}}/auth/login</span>
+        <span>Content-Type: application/json</span>
+        <span>&nbsp;</span>
+        <span>{ <span style="color:var(--c-strq)">"email"</span>: <span style="color:var(--c-strq)">"pedro@email.com"</span>, <span style="color:var(--c-strq)">"password"</span>: <span style="color:var(--c-strq)">"9999"</span> }</span>
+      </div>
+      <div class="output" data-step="2" style="gap:1px;font-size:clamp(10px,1.3vw,15px);padding:10px 16px">
+        <span class="bar">▤ resposta · 200</span>
+        <span>{ <span style="color:var(--c-strq)">"token"</span>: <span style="color:var(--c-strq)">"eyJhbGciOi..."</span> }</span>
+      </div>
+    </div>
+    <div class="grid2" data-step="3">
+      <div class="panel"><span class="cap">SENHA CERTA</span><span style="color:var(--green)">200</span> e o token na resposta.</div>
+      <div class="panel"><span class="cap">SENHA OU EMAIL ERRADO</span><span style="color:var(--c-op)">401</span> "Email ou senha inválidos".</div>
+    </div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Ver o login funcionando nos dois casos: certo e errado.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Antes: crie um usuário novo no POST /usuario (pra senha já ir com hash).</li><li>O <b># @name login</b> dá um nome pra essa requisição. No próximo teste a gente lê o token da resposta dela sem copiar e colar.</li><li>Teste também com a senha errada e com um email que não existe: as duas respostas são iguais.</li><li>Cole o token no jwt.io de novo e mostre o sub e o perfil do usuário de vocês.</li></ul>
+<h4>TEMPO</h4><p class="time">~6 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>USANDO O CRACHÁ</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Conferindo o token na rota</h2>
+    <div class="output" data-step="1" style="gap:1px;font-size:clamp(10px,1.3vw,15px);padding:9px 16px">
+      <span class="bar">▤ o cliente manda no header</span>
+      <span><span style="color:var(--c-func)">Authorization</span>: <span class="blk blk-kw chip" data-term="bearer" tabindex="0" role="button" aria-haspopup="dialog" style="padding:2px 8px">Bearer</span> eyJhbGciOi...</span>
+    </div>
+    <div class="output" data-step="2" style="gap:1px;font-size:clamp(9px,1.2vw,14px);padding:9px 15px">
+      <span class="bar">▤ primeira versão: conferindo dentro da rota</span>
+      <span>app.<span style="color:var(--c-func)">get</span>(<span style="color:var(--c-strq)">"/me"</span>, async (request, reply) =&gt; {</span>
+      <span style="color:var(--accent)">&nbsp;&nbsp;try {</span>
+      <span style="color:var(--accent)">&nbsp;&nbsp;&nbsp;&nbsp;await request.jwtVerify()</span>
+      <span style="color:var(--accent)">&nbsp;&nbsp;} catch (erro) {</span>
+      <span style="color:var(--accent)">&nbsp;&nbsp;&nbsp;&nbsp;return reply.status(401).send({ message: "Token inválido ou ausente" })</span>
+      <span style="color:var(--accent)">&nbsp;&nbsp;}</span>
+      <span>&nbsp;</span>
+      <span>&nbsp;&nbsp;<span style="color:var(--c-kw)">const</span> { sub } = request.user <span style="color:var(--c-kw)">as</span> TokenPayload</span>
+      <span style="color:var(--muted)">&nbsp;&nbsp;// ... busca o usuário pelo sub e devolve</span>
+      <span>})</span>
+    </div>
+    <div class="anatomy-cap" style="gap:5px">
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.6vw,18px)"><span class="blk blk-func chip" style="padding:3px 9px">jwtVerify</span><div>lê o header, confere a assinatura e a validade</div></div>
+      <div class="row" data-step="4" style="font-size:clamp(12px,1.6vw,18px)"><span class="blk blk-var chip" style="padding:3px 9px">request.user</span><div>se deu certo, o payload do token fica aqui</div></div>
+    </div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Mostrar como a rota confere o token, do jeito mais direto, pra depois sentir a repetição.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>O jwtVerify dá erro (cai no catch) se: não tem header, o token foi alterado, foi assinado com outro segredo ou já expirou.</li><li>request.user tem o mesmo payload que o login assinou: sub e perfil. Com o sub dá pra buscar o usuário no banco.</li><li>Pode digitar essa versão de verdade. No próximo slide a gente melhora.</li></ul>
+<h4>TEMPO</h4><p class="time">~6 min</p></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span class="sq"></span>O PROBLEMA DE NOVO</div>
+    <h2>E com 10 rotas protegidas?</h2>
+    <div class="sub" data-step="1" style="max-width:46ch">Aquele <b>try / catch</b> ia ser copiado em <span style="color:var(--c-op)">todas</span>: DELETE /usuario, PUT /usuario, rotas de artista...</div>
+    <div class="grid2" data-step="2">
+      <div class="panel"><span class="cap">COPIAR E COLAR</span>Mudou a mensagem do 401? Mexe em <span style="color:var(--c-op)">10 lugares</span>. Esqueceu em uma? Rota aberta.</div>
+      <div class="panel"><span class="cap">UMA FUNÇÃO SÓ</span>Escreve a conferência <span style="color:var(--green)">uma vez</span> e cada rota só diz "use ela".</div>
+    </div>
+    <div class="lead" data-step="3">Essa função que roda antes da rota tem nome: <span style="color:var(--accent)">middleware</span>.</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Criar a necessidade do middleware, do mesmo jeito que a aula de rotas criou a necessidade de separar arquivos.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Pergunte: "o que a gente faz em programação quando um código se repete?" Resposta esperada: vira uma função.</li></ul>
+<h4>TEMPO</h4><p class="time">~3 min</p></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span class="sq"></span>A IDEIA</div>
+    <h2>O segurança na porta</h2>
+    <div class="diagram" data-step="1">
+      <div class="node"><span class="ic">☺</span>requisição</div>
+      <div class="arrows"><div class="arrow"><span class="line"></span><span class="tip">▶</span></div></div>
+      <div class="node" style="box-shadow:inset 0 0 0 3px var(--accent)"><span class="ic">◆</span>middleware<br><small style="color:var(--muted)">verificarToken</small></div>
+      <div class="arrows"><div class="arrow"><span class="line"></span><span class="tip">▶</span><span class="lbl">token ok</span></div></div>
+      <div class="node"><span class="ic">▤</span>rota<br><small style="color:var(--muted)">GET /auth/me</small></div>
+    </div>
+    <div class="rows" data-step="2">
+      <div class="row"><span class="mk ok">▸</span><div>Token válido: deixa passar, a rota roda normal.</div></div>
+      <div class="row"><span class="mk" style="color:var(--c-op)">▸</span><div>Token inválido: responde <b>401</b> e a rota <b>nem chega a rodar</b>.</div></div>
+    </div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Dar a imagem do middleware como uma etapa no caminho da requisição.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Volte na analogia: o middleware é o segurança que olha a pulseira. A rota é o show. Sem pulseira, nem entra.</li><li>Middleware não é coisa só de login: dá pra usar pra log, pra checar perfil de admin etc. Hoje só o de token.</li></ul>
+<h4>TEMPO</h4><p class="time">~4 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>MÃO NA MASSA · TODO MUNDO JUNTO</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Criando o middleware</h2>
+    <div class="output" data-step="1" style="gap:1px;font-size:clamp(9px,1.25vw,15px);padding:10px 16px">
+      <span class="bar">▤ src/middlewares/verificar-token.ts</span>
+      <span><span style="color:var(--c-kw)">import type</span> { FastifyReply, FastifyRequest } <span style="color:var(--c-kw)">from</span> <span style="color:var(--c-strq)">"fastify"</span></span>
+      <span>&nbsp;</span>
+      <span><span style="color:var(--c-kw)">export async function</span> <span style="color:var(--c-func)">verificarToken</span>(request: FastifyRequest, reply: FastifyReply) {</span>
+      <span>&nbsp;&nbsp;<span style="color:var(--c-kw)">try</span> {</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">await</span> request.<span style="color:var(--c-func)">jwtVerify</span>()</span>
+      <span>&nbsp;&nbsp;} <span style="color:var(--c-kw)">catch</span> (erro) {</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-kw)">return</span> reply.status(<span style="color:var(--blue)">401</span>).send({ message: <span style="color:var(--c-strq)">"Token inválido ou ausente"</span> })</span>
+      <span>&nbsp;&nbsp;}</span>
+      <span>}</span>
+    </div>
+    <div class="anatomy-cap" style="gap:5px">
+      <div class="row" data-step="2" style="font-size:clamp(12px,1.6vw,18px)"><span class="blk blk-func chip" data-term="middleware" tabindex="0" role="button" aria-haspopup="dialog" style="padding:3px 9px">verificarToken</span><div>o mesmo try / catch de antes, agora numa função própria</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.6vw,18px)"><span class="blk blk-kw chip" style="padding:3px 9px">FastifyRequest</span><div>os tipos do request e do reply, pro TypeScript</div></div>
+    </div>
+    <div class="lead" data-step="4" style="font-size:clamp(13px,1.9vw,22px)">Pasta nova: <b>src/middlewares/</b>. Um arquivo por middleware.</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Mostrar que o middleware é só o try / catch do slide anterior, recortado pra uma função.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Faça literalmente Ctrl+X no try / catch da rota /me e cole aqui. Mesma ideia da aula de rotas: o código não muda, só muda de lugar.</li><li>FastifyRequest e FastifyReply são como o FastifyInstance da aula passada: etiquetas de tipo, somem quando vira JS.</li><li>Se o token for válido, a função termina sem responder nada. Isso é o sinal pro Fastify seguir pra rota.</li></ul>
+<h4>TEMPO</h4><p class="time">~8 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>LIGANDO O MIDDLEWARE</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Uma rota protegida</h2>
+    <div class="output" data-step="1" style="gap:1px;font-size:clamp(9px,1.25vw,15px);padding:10px 16px">
+      <span class="bar">▤ src/routes/auth.routes.ts</span>
+      <span><span style="color:var(--c-kw)">import</span> { verificarToken } <span style="color:var(--c-kw)">from</span> <span style="color:var(--c-strq)">"../middlewares/verificar-token.js"</span></span>
+      <span>&nbsp;</span>
+      <span>app.<span style="color:var(--c-func)">get</span>(<span style="color:var(--c-strq)">"/me"</span>, <span style="color:var(--accent)">{ onRequest: verificarToken }</span>, async (request) =&gt; {</span>
+      <span style="color:var(--green)">&nbsp;&nbsp;// se chegou aqui, o token é válido</span>
+      <span>&nbsp;&nbsp;<span style="color:var(--c-kw)">const</span> { sub } = request.user <span style="color:var(--c-kw)">as</span> TokenPayload</span>
+      <span>&nbsp;</span>
+      <span>&nbsp;&nbsp;<span style="color:var(--c-kw)">return</span> connection(<span style="color:var(--c-strq)">"usuario"</span>)</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;.select(<span style="color:var(--c-strq)">"usuario_id"</span>, <span style="color:var(--c-strq)">"name"</span>, <span style="color:var(--c-strq)">"email"</span>, <span style="color:var(--c-strq)">"perfil"</span>)</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;.where({ usuario_id: sub }).first()</span>
+      <span>})</span>
+    </div>
+    <div class="anatomy-cap" style="gap:5px">
+      <div class="row" data-step="2" style="font-size:clamp(12px,1.6vw,18px)"><span class="blk blk-var chip" data-term="onrequest" tabindex="0" role="button" aria-haspopup="dialog" style="padding:3px 9px">onRequest</span><div>"antes desta rota, roda o verificarToken"</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.6vw,18px)"><span class="mk">▸</span><div>a rota ficou só com o que é dela: buscar o usuário</div></div>
+    </div>
+    <div class="panel accent" data-step="4"><span class="cap">PROTEGER OUTRA ROTA?</span>Importa e coloca o mesmo segundo argumento: <code>app.delete("/:id", { onRequest: verificarToken }, ...)</code></div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Ligar o middleware na rota e mostrar como a rota fica limpa.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>O segundo argumento do app.get é um objeto de opções. O onRequest é uma das opções: "o que rodar quando a requisição chegar".</li><li>O select escolhe as colunas: assim o senha_hash não vai na resposta.</li><li>Exercício rápido: proteger o DELETE /usuario/:id do mesmo jeito.</li></ul>
+<h4>TEMPO</h4><p class="time">~7 min</p></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span class="sq"></span>HORA DA VERDADE</div>
+    <h2>Testando a rota protegida</h2>
+    <div class="output" data-step="1" style="gap:2px;font-size:clamp(10px,1.35vw,16px);padding:10px 18px">
+      <span class="bar">▤ requests.http</span>
+      <span class="val">GET {{baseUrl}}/auth/me</span>
+      <span>Authorization: Bearer <span style="color:var(--accent)">{{login.response.body.token}}</span></span>
+    </div>
+    <div class="rows" style="gap:10px">
+      <div class="row" data-step="2" style="font-size:clamp(12px,1.7vw,20px)"><span class="vtag" style="background:var(--green);color:#08221d">200</span><div>com o token do login: devolve os dados do usuário</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.7vw,20px)"><span class="vtag" style="background:var(--c-op)">401</span><div>sem a linha <b>Authorization</b></div></div>
+      <div class="row" data-step="4" style="font-size:clamp(12px,1.7vw,20px)"><span class="vtag" style="background:var(--c-op)">401</span><div>com o token alterado (troca uma letra)</div></div>
+    </div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Provar os três casos: token bom, sem token, token falsificado.</p>
+<h4>CONDUZA ASSIM</h4><ul><li><b>{{login.response.body.token}}</b> pega o token da resposta da requisição chamada "login". Precisa rodar o login antes, no mesmo arquivo.</li><li>Pro caso 3, copie o token, troque uma letra no meio e cole no lugar da variável. A assinatura não bate e vem 401.</li><li>Se der tempo: mude o expiresIn pra "30s", faça login, espere e tente o /me de novo.</li></ul>
+<h4>TEMPO</h4><p class="time">~6 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>QUANDO DÁ ERRADO</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">Erros que vão aparecer</h2>
+    <div class="rows" style="gap:10px">
+      <div class="row" data-step="1" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-op)">env</span><div><b>Invalid environment variables</b>: faltou o <b>JWT_SECRET</b> no .env.</div></div>
+      <div class="row" data-step="2" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-op)">plugin</span><div><b>jwtSign / jwtVerify is not a function</b>: faltou o <b>app.register(jwt)</b> no server.ts.</div></div>
+      <div class="row" data-step="3" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-op)">401</span><div>Login sempre falha: o usuário foi criado <b>antes do hash</b>. Crie um novo.</div></div>
+      <div class="row" data-step="4" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-op)">401</span><div>/me sempre falha: esqueceu o <b>Bearer </b> (com espaço) antes do token, ou o token expirou.</div></div>
+    </div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Antecipar os erros mais comuns da aula, pra turma reconhecer a mensagem.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Depois de mudar o .env, reinicie o npm run dev: o tsx watch não recarrega o .env sozinho.</li><li>Se trocar o JWT_SECRET, todos os tokens antigos param de valer (a assinatura não bate mais). Faça login de novo.</li></ul>
+<h4>TEMPO</h4><p class="time">~5 min</p></div>
+  </section>
+
+  <section class="slide" style="gap:10px">
+    <div class="eyebrow"><span class="sq"></span>O QUE CONSTRUÍMOS HOJE</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">A estrutura do projeto</h2>
+    <div class="output" data-step="1" style="gap:1px;font-size:clamp(10px,1.35vw,16px);padding:10px 18px">
+      <span class="bar">▤ árvore do projeto</span>
+      <span style="color:var(--c-tag)">curso/</span>
+      <span style="color:var(--c-tag)">+-- src/</span>
+      <span style="color:var(--c-tag)">|   +-- config/</span>
+      <span style="color:var(--accent)">|   +-- middlewares/</span>
+      <span>|   |   `-- <span style="color:var(--accent)">verificar-token.ts</span></span>
+      <span style="color:var(--c-tag)">|   +-- routes/</span>
+      <span>|   |   +-- <span style="color:var(--accent)">auth.routes.ts</span>    <span style="color:var(--muted)">(login e /me)</span></span>
+      <span>|   |   `-- <span style="color:var(--green)">users.routes.ts</span>   <span style="color:var(--muted)">(salva o hash)</span></span>
+      <span style="color:var(--c-tag)">|   +-- shared/</span>
+      <span>|   |   `-- env/ <span style="color:var(--green)">environments.ts</span> <span style="color:var(--muted)">(JWT_SECRET)</span></span>
+      <span>|   `-- <span style="color:var(--green)">server.ts</span>  <span style="color:var(--muted)">(registra o jwt)</span></span>
+      <span>+-- <span style="color:var(--green)">.env</span>  <span style="color:var(--muted)">(JWT_SECRET)</span></span>
+      <span style="color:var(--muted)">`-- package.json</span>
+    </div>
+    <div class="lead" data-step="2" style="font-size:clamp(13px,1.9vw,22px)">Em <span style="color:var(--accent)">laranja</span>, o que nasceu hoje. Em <span style="color:var(--green)">verde</span>, o que mudou.</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Fechar mostrando onde cada peça mora.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Repare que o padrão das aulas anteriores se repete: assunto novo (auth) = arquivo novo em routes + uma linha de register.</li></ul>
+<h4>TEMPO</h4><p class="time">~3 min</p></div>
+  </section>
+
+  <section class="slide">
+    <div class="eyebrow"><span class="sq"></span>FECHAMENTO</div>
+    <h2>O que vocês aprenderam hoje</h2>
+    <div class="rows" data-step="1">
+      <div class="row"><span class="mk ok">▸</span><div><b>Login</b>: procura pelo email, compara a senha com o hash, devolve um token.</div></div>
+      <div class="row"><span class="mk ok">▸</span><div><b>JWT</b>: header + payload + assinatura. Qualquer um lê, só a API assina.</div></div>
+      <div class="row"><span class="mk ok">▸</span><div><b>Middleware</b>: uma função que roda antes da rota e pode barrar a requisição.</div></div>
+    </div>
+    <div class="panel accent" data-step="2"><span class="cap">PRÓXIMO PASSO</span>Proteger as rotas de usuário e liberar algumas só pro perfil <b>admin</b>, usando o perfil que já está dentro do token.</div>
+    <div class="hint" data-step="3">fim da aula · valeu!</div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Recapitular os três conceitos e como eles se encaixam: o login cria o token, o middleware confere o token.</p>
+<h4>TEMPO</h4><p class="time">~2 min</p></div>
+  </section>
+
+</div>
+
+<button id="prev" class="navbtn" aria-label="Voltar">◀</button>
+<button id="next" class="navbtn" aria-label="Avançar">▶</button>
+<button id="fs" class="navbtn fs" aria-label="Tela cheia">⤢</button>
+<button id="info" class="navbtn info" aria-label="Notas do professor" title="Notas do professor (tecla i)">i</button>
+
+<aside id="drawer">
+  <div class="notes-head">
+    <span class="nh-title">NOTAS DO PROFESSOR</span>
+    <span class="nh-num" id="notesNum">01 / 15</span>
+    <button id="closeNotes" aria-label="Fechar notas">×</button>
+  </div>
+  <div class="notes-body" id="notesBody"></div>
+</aside>
+
+<div id="termOverlay" role="dialog" aria-modal="true">
+  <div id="termModal">
+    <div class="tm-head">
+      <span class="tm-chip"></span>
+      <span class="tm-title" id="tmTitle"></span>
+      <button class="tm-close" id="tmClose" aria-label="Fechar">×</button>
+    </div>
+    <div class="tm-body" id="tmBody"></div>
+  </div>
+</div>
+
+<div id="bar">
+  <span class="brand"><b>BACKEND I</b> · Login, JWT e middleware</span>
+  <div id="prog"><i></i></div>
+  <span id="count">01 / 15</span>
+</div>
+
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const stage=document.getElementById('stage');
+  const progFill=document.querySelector('#prog i');
+  const count=document.getElementById('count');
+  let si=0, step=0;
+
+  const drawer=document.getElementById('drawer');
+  const infoBtn=document.getElementById('info');
+  const notesBody=document.getElementById('notesBody');
+  const notesNum=document.getElementById('notesNum');
+  let drawerOpen=false;
+  function updateDrawer(){
+    const n=slides[si].querySelector('.pnote');
+    notesBody.innerHTML=n?n.innerHTML:'<p>—</p>';
+    notesBody.scrollTop=0;
+    notesNum.textContent=String(si+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  }
+  function toggleDrawer(){ drawerOpen=!drawerOpen; drawer.classList.toggle('open',drawerOpen); infoBtn.classList.toggle('active',drawerOpen); }
+  function closeDrawer(){ drawerOpen=false; drawer.classList.remove('open'); infoBtn.classList.remove('active'); }
+
+  const termOverlay=document.getElementById('termOverlay');
+  const termModal=document.getElementById('termModal');
+  const tmTitle=document.getElementById('tmTitle');
+  const tmBody=document.getElementById('tmBody');
+  const tmChip=termModal.querySelector('.tm-chip');
+  const tmClose=document.getElementById('tmClose');
+
+  const TERMS={
+    hash:{
+      title:'hash — a senha embaralhada',
+      chip:'hash', chipClass:'blk-func',
+      body:`<p>Um <b>hash</b> transforma a senha num texto embaralhado. É um caminho de <b>só ida</b>: do hash não dá pra descobrir a senha.</p>
+        <p class="tm-example"><code>bcrypt.hash("9999", 8)</code> = <b>$2b$08$aspHpIT8...</b></p>
+        <p class="tm-example">No login, a gente não "desembaralha" nada: o <code>bcrypt.compare</code> embaralha a senha digitada do mesmo jeito e confere se dá o mesmo resultado.</p>`
+    },
+    secret:{
+      title:'JWT_SECRET — a chave da API',
+      chip:'JWT_SECRET', chipClass:'blk-var',
+      body:`<p>É uma frase secreta que <b>só a API conhece</b>. Ela é usada pra assinar o token no login e pra conferir a assinatura depois.</p>
+        <p class="tm-example">Sem ela, ninguém consegue criar um token que a API aceite.</p>
+        <p class="tm-example">Mora no <b>.env</b>, que não vai pro Git. Se vazar, qualquer um fabrica tokens: troque na hora.</p>`
+    },
+    jwtsign:{
+      title:'jwtSign — criando o token',
+      chip:'jwtSign', chipClass:'blk-func',
+      body:`<p><code>reply.jwtSign(payload)</code> monta o token: junta o header, o payload e assina com o JWT_SECRET.</p>
+        <p class="tm-example">Ele só existe porque o server.ts fez <code>app.register(jwt, { secret })</code>.</p>
+        <p class="tm-example">O <code>{ expiresIn: "1d" }</code> coloca a data de validade (<b>exp</b>) dentro do token.</p>`
+    },
+    bearer:{
+      title:'Bearer — "o portador"',
+      chip:'Bearer', chipClass:'blk-kw',
+      body:`<p><b>Bearer</b> quer dizer "portador": quem estiver com esse token, entra.</p>
+        <p class="tm-example">O formato do header é sempre <code>Authorization: Bearer &lt;token&gt;</code>, com um espaço entre os dois.</p>
+        <p class="tm-example">É por isso que o token precisa ser guardado com cuidado: é como uma chave de casa.</p>`
+    },
+    middleware:{
+      title:'middleware — o que roda no meio',
+      chip:'verificarToken', chipClass:'blk-func',
+      body:`<p><b>Middleware</b> é uma função que roda <b>no meio do caminho</b>: depois que a requisição chega e antes da rota.</p>
+        <p class="tm-example">Ele pode deixar passar (não responde nada) ou barrar (responde, por exemplo, 401). Se barrar, a rota nem roda.</p>
+        <p class="tm-example">Escreve uma vez, usa em quantas rotas quiser.</p>`
+    },
+    onrequest:{
+      title:'onRequest — quando rodar',
+      chip:'onRequest', chipClass:'blk-var',
+      body:`<p>O segundo argumento do <code>app.get</code> é um objeto de opções. O <b>onRequest</b> diz o que rodar assim que a requisição chega.</p>
+        <p class="tm-example"><code>app.get("/me", { onRequest: verificarToken }, async (request) =&gt; { ... })</code></p>
+        <p class="tm-example">No Fastify isso se chama <b>hook</b> (gancho): um ponto do caminho onde dá pra pendurar uma função.</p>`
+    },
+    salt:{
+      title:'salt — o tempero aleatório',
+      chip:'salt', chipClass:'blk-tag',
+      body:`<p>O <b>salt</b> é um texto aleatório que o bcrypt sorteia e mistura com a senha antes de gerar o hash.</p>
+        <p class="tm-example">Resultado: duas pessoas com a mesma senha ficam com hashes <b>diferentes</b>, e as listas prontas de hashes de senhas comuns param de funcionar.</p>
+        <p class="tm-example">Ele <b>não é secreto</b>: fica guardado dentro do próprio senha_hash, logo depois do custo.</p>`
+    },
+    base64:{
+      title:'base64 — outro jeito de escrever',
+      chip:'base64', chipClass:'blk-str',
+      body:`<p><b>Base64</b> reescreve qualquer texto usando só letras, números e poucos símbolos, pra ele viajar sem problema em URLs e headers.</p>
+        <p class="tm-example">Não tem chave: qualquer um volta pro texto original. É <b>codificar</b>, não criptografar.</p>
+        <p class="tm-example">O JWT usa uma variação chamada base64url (troca + por - e / por _).</p>`
+    },
+    hmac:{
+      title:'HMAC — hash com uma chave',
+      chip:'HMAC-SHA256', chipClass:'blk-func',
+      body:`<p><b>HMAC</b> é um hash que mistura o conteúdo com uma chave secreta (no nosso caso, o JWT_SECRET).</p>
+        <p class="tm-example">Mesmo conteúdo + mesma chave = sempre a mesma assinatura. Mudou qualquer coisa = assinatura totalmente diferente.</p>
+        <p class="tm-example">Sem a chave, ninguém consegue calcular a assinatura certa. É isso que impede alguém de fabricar ou alterar um token.</p>`
+    }
+  };
+
+  function openTerm(key){
+    const t=TERMS[key]; if(!t) return;
+    tmTitle.textContent=t.title;
+    tmChip.textContent=t.chip;
+    tmChip.className='tm-chip blk '+t.chipClass;
+    tmBody.innerHTML=t.body;
+    termOverlay.classList.add('open');
+  }
+  function closeTerm(){ termOverlay.classList.remove('open'); }
+  document.querySelectorAll('[data-term]').forEach(el=>{
+    el.addEventListener('click',e=>{ e.stopPropagation(); openTerm(el.dataset.term); });
+    el.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); e.stopPropagation(); openTerm(el.dataset.term); }
+    });
+  });
+  tmClose.addEventListener('click',e=>{e.stopPropagation();closeTerm()});
+  termOverlay.addEventListener('click',e=>{ if(e.target===termOverlay) closeTerm(); });
+  termModal.addEventListener('click',e=>e.stopPropagation());
+
+  const maxStep=s=>slides[s].querySelectorAll('[data-step]').length
+    ? Math.max(0,...[...slides[s].querySelectorAll('[data-step]')].map(e=>+e.dataset.step)) : 0;
+
+  function render(){
+    slides.forEach((s,i)=>s.classList.toggle('active',i===si));
+    slides[si].querySelectorAll('[data-step]').forEach(el=>{
+      const on=+el.dataset.step<=step, was=el.dataset.shown==='1';
+      if(on && !was){
+        el.classList.add('reveal'); el.dataset.shown='1';
+        if(el.classList.contains('code-line')){ el.classList.remove('reveal'); void el.offsetWidth; el.classList.add('reveal'); }
+      }else if(!on && was){ el.classList.remove('reveal'); el.dataset.shown='0'; }
+    });
+    let done=0,total=0;
+    slides.forEach((s,i)=>{const m=maxStep(i)+1; total+=m; done+=i<si?m:(i===si?step+1:0)});
+    progFill.style.width=(done/total*100)+'%';
+    count.textContent=String(si+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+    updateDrawer();
+  }
+  function next(){ if(step<maxStep(si)) step++; else if(si<slides.length-1){si++;step=0;} render(); }
+  function prev(){ if(step>0) step--; else if(si>0){si--;step=maxStep(si);} render(); }
+  function goto(i){ si=Math.max(0,Math.min(slides.length-1,i)); step=0; render(); }
+
+  document.getElementById('next').addEventListener('click',e=>{e.stopPropagation();next()});
+  document.getElementById('prev').addEventListener('click',e=>{e.stopPropagation();prev()});
+  document.getElementById('fs').addEventListener('click',e=>{e.stopPropagation(); document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.();});
+  infoBtn.addEventListener('click',e=>{e.stopPropagation();toggleDrawer()});
+  document.getElementById('closeNotes').addEventListener('click',e=>{e.stopPropagation();closeDrawer()});
+  drawer.addEventListener('click',e=>e.stopPropagation());
+  stage.addEventListener('click',e=>{ if(!e.target.closest('.navbtn') && !e.target.closest('[data-term]')) next(); });
+  document.addEventListener('keydown',e=>{
+    if(termOverlay.classList.contains('open')){
+      if(e.key==='Escape'){ closeTerm(); }
+      return;
+    }
+    switch(e.key){
+      case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown': case 'Enter': e.preventDefault(); next(); break;
+      case 'ArrowLeft': case 'ArrowUp': case 'PageUp': case 'Backspace': e.preventDefault(); prev(); break;
+      case 'Home': e.preventDefault(); goto(0); break;
+      case 'End': e.preventDefault(); goto(slides.length-1); break;
+      case 'f': case 'F': document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.(); break;
+      case 'i': case 'I': e.preventDefault(); toggleDrawer(); break;
+      case 'Escape': closeDrawer(); break;
+    }
+  });
+
+  // botao copiar: pega o texto de cada linha do bloco (sem o titulo) e manda pro Ctrl+C
+  function codeText(out){
+    return [...out.children].filter(el=>!el.classList.contains('bar') && !el.classList.contains('copy-btn'))
+      .map(el=>el.textContent.replace(/\u00a0/g,' ').replace(/\s+$/,'')).join('\n').replace(/^\n+|\n+$/g,'');
+  }
+  function copyText(text){
+    if(navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise((ok,fail)=>{
+      const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy') ? ok() : fail(); }catch(err){ fail(err); }
+      ta.remove();
+    });
+  }
+  document.querySelectorAll('.output').forEach(out=>{
+    const btn=document.createElement('button');
+    btn.type='button'; btn.className='copy-btn'; btn.textContent='copiar'; btn.setAttribute('aria-label','Copiar código');
+    btn.addEventListener('click',e=>{
+      e.stopPropagation(); btn.blur();
+      copyText(codeText(out)).then(()=>{ btn.textContent='copiado!'; btn.classList.add('done'); },
+        ()=>{ btn.textContent='erro'; })
+        .finally(()=>setTimeout(()=>{ btn.textContent='copiar'; btn.classList.remove('done'); },1500));
+    });
+    btn.addEventListener('keydown',e=>e.stopPropagation());
+    out.appendChild(btn);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
