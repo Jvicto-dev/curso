@@ -460,11 +460,26 @@ function parseHttpFile(text, fileName) {
 }
 
 function convInsomnia(s) {
-  return String(s ?? "").replace(/\{\{\s*_\.([\w-]+)\s*\}\}/g, "{{$1}}")
+  // sintaxe do Insomnia -> sintaxe do testador
+  return String(s ?? "")
+    .replace(/\{\{\s*_\.([\w-]+)\s*\}\}/g, "{{$1}}")
+    .replace(/\{%\s*uuid\b[^%]*%\}/g, "{{$guid}}")
+    .replace(/\{%\s*now\s+'unix'[^%]*%\}/g, "{{$timestamp}}")
+}
+function decodeInsomniaArg(a) {
+  // o Insomnia às vezes grava os argumentos das tags como b64::<base64>::46b
+  const m = String(a).match(/^b64::(.*)::46b$/)
+  if (!m) return a
+  try { return decodeURIComponent(escape(atob(m[1]))) } catch { return a }
+}
+function slugCamel(name) {
+  const words = String(name).normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\w ]+/g, " ").trim().split(/\s+/)
+  return words.map((w, i) => i ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w.toLowerCase()).join("") || "requisicao"
 }
 function importInsomnia(data) {
   // Exportação do Insomnia (formato v4, JSON)
   const res = data.resources || []
+  const byInsomniaId = {}
   const byParent = {}
   for (const r of res) (byParent[r.parentId] = byParent[r.parentId] || []).push(r)
   const sortKey = r => (typeof r.metaSortKey === "number" ? r.metaSortKey : 0)
@@ -479,7 +494,7 @@ function importInsomnia(data) {
       if (r._type === "request") {
         const body = r.body || {}
         const auth = r.authentication || {}
-        return [newRequest({
+        return [byInsomniaId[r._id] = newRequest({
           name: r.name || "Requisição",
           method: (r.method || "GET").toUpperCase(),
           url: convInsomnia(r.url),
@@ -502,7 +517,112 @@ function importInsomnia(data) {
       for (const sub of subs) envs.push(newEnv({ name: sub.name || "Ambiente", vars: toVars(Object.assign({}, base.data, sub.data)) }))
     }
   }
+
+  // {% response 'body', 'req_x', '$.campo', ... %} -> {{nomeDeReferencia.response.body.campo}}
+  const used = new Set()
+  walk(items, it => { if (it.refName) used.add(it.refName) })
+  const refFor = insomniaId => {
+    const target = byInsomniaId[insomniaId]
+    if (!target) return null
+    if (!target.refName) {
+      const base = slugCamel(target.name)
+      let name = base, i = 2
+      while (used.has(name)) name = base + i++
+      target.refName = name
+      used.add(name)
+    }
+    return target.refName
+  }
+  const convTags = s => String(s ?? "").replace(/\{%\s*response\s+([^%]*?)%\}/g, (whole, args) => {
+    const [attr, id, filter] = [...args.matchAll(/'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)"/g)].map(m => decodeInsomniaArg(m[1] ?? m[2]))
+    const ref = refFor(id)
+    if (!ref) return whole
+    if (attr === "header") return `{{${ref}.response.headers.${filter}}}`
+    if (attr === "body") {
+      const path = String(filter || "").replace(/^\$\.?/, "")
+      return path ? `{{${ref}.response.body.${path}}}` : `{{${ref}.response.body}}`
+    }
+    return whole
+  })
+  walk(items, it => {
+    if (it.type === "folder") { for (const v of it.vars) v.value = convTags(v.value); return }
+    it.url = convTags(it.url)
+    it.body = convTags(it.body)
+    it.auth.token = convTags(it.auth.token)
+    for (const h of it.headers) h.value = convTags(h.value)
+  })
+  for (const env of envs) for (const v of env.vars) v.value = convTags(v.value)
   return { items, envs }
+}
+
+/* ---------- exportar no formato do Insomnia (v4) ---------- */
+// Assim o mesmo arquivo abre no Insomnia e aqui no testador.
+function toInsomniaText(s, idOfRef) {
+  return String(s ?? "").replace(/\{\{\s*([^{}]+?)\s*\}\}/g, (whole, expr) => {
+    expr = expr.trim()
+    const ref = expr.match(/^([\w-]+)\.response\.(body|headers)(?:\.(.*))?$/)
+    if (ref) {
+      const id = idOfRef(ref[1])
+      if (!id) return whole
+      if (ref[2] === "headers") return `{% response 'header', '${id}', '${ref[3] || ""}', 'never', 60 %}`
+      return `{% response 'body', '${id}', '${ref[3] ? "$." + ref[3] : "$"}', 'never', 60 %}`
+    }
+    if (/^\$(guid|uuid|randomUUID)$/.test(expr)) return "{% uuid 'v4' %}"
+    if (expr === "$timestamp") return "{% now 'unix' %}"
+    if (expr.startsWith("$")) return whole
+    return `{{ _.${expr} }}`
+  })
+}
+function exportInsomnia(items, envs, activeEnvId, name) {
+  const now = Date.now()
+  const safeId = (prefix, id) => prefix + String(id).replace(/\W/g, "")
+  const wrk = safeId("wrk_", uid())
+  const resources = [{ _id: wrk, _type: "workspace", parentId: null, name: name || "Testador de API", description: "", scope: "collection", created: now, modified: now }]
+
+  const reqId = new Map()
+  walk(items, it => { if (it.type === "request") reqId.set(it, safeId("req_", it.id)) })
+  const idOfRef = refName => {
+    let hit = null
+    walk(items, it => { if (!hit && it.type === "request" && it.refName === refName) hit = it })
+    return hit ? reqId.get(hit) : null
+  }
+  const t = s => toInsomniaText(s, idOfRef)
+  const varsObj = vars => Object.fromEntries((vars || []).filter(v => v.enabled !== false && v.key.trim()).map(v => [v.key.trim(), t(v.value)]))
+
+  // ambiente base = o ambiente ativo (funciona no Insomnia sem precisar escolher nada)
+  const activeEnv = envs.find(e => e.id === activeEnvId) || envs[0]
+  const base = { _id: safeId("env_", uid()), _type: "environment", parentId: wrk, name: "Base Environment", data: varsObj(activeEnv && activeEnv.vars), created: now, modified: now, metaSortKey: 0 }
+  resources.push(base)
+  envs.forEach((e, i) => resources.push({ _id: safeId("env_", uid()), _type: "environment", parentId: base._id, name: e.name, data: varsObj(e.vars), isPrivate: false, created: now, modified: now, metaSortKey: i + 1 }))
+
+  let sort = 0
+  const add = (list, parent) => {
+    for (const it of list) {
+      sort += 100
+      if (it.type === "folder") {
+        const fid = safeId("fld_", it.id)
+        resources.push({ _id: fid, _type: "request_group", parentId: parent, name: it.name, description: "", environment: varsObj(it.vars), environmentPropertyOrder: null, metaSortKey: sort, created: now, modified: now })
+        add(it.children, fid)
+        continue
+      }
+      const hasBody = it.bodyType !== "none" && it.body.trim() && !["GET", "HEAD"].includes(it.method)
+      const mime = it.bodyType === "json" ? "application/json" : "text/plain"
+      const headers = (it.headers || []).filter(h => h.key.trim()).map(h => ({ name: h.key.trim(), value: t(h.value), disabled: h.enabled === false }))
+      if (hasBody && !headers.some(h => h.name.toLowerCase() === "content-type")) headers.push({ name: "Content-Type", value: mime })
+      resources.push({
+        _id: reqId.get(it), _type: "request", parentId: parent, name: it.name, description: "",
+        method: it.method, url: t(it.url),
+        body: hasBody ? { mimeType: mime, text: t(it.body) } : {},
+        headers, parameters: [],
+        authentication: it.auth && it.auth.type === "bearer" ? { type: "bearer", token: t(it.auth.token), prefix: "" } : {},
+        metaSortKey: sort, isPrivate: false, settingStoreCookies: true, settingSendCookies: true,
+        settingDisableRenderRequestBody: false, settingEncodeUrl: true, settingRebuildPath: true, settingFollowRedirects: "global",
+        created: now, modified: now,
+      })
+    }
+  }
+  add(items, wrk)
+  return { _type: "export", __export_format: 4, __export_date: new Date().toISOString(), __export_source: "testador-de-api", resources }
 }
 
 function importPostman(data) {
@@ -775,7 +895,7 @@ if (typeof document !== "undefined" && document.getElementById("app")) {
     bindKv($("#fVars"), f.vars, structural => structural && renderFolder(f))
     $("#fAdd").onclick = () => { const r = newRequest(); f.children.push(r); f.open = true; select(r.id) }
     $("#fSub").onclick = () => { const s = newFolder(); f.children.push(s); f.open = true; ui.renaming = s.id; select(s.id) }
-    $("#fExport").onclick = () => download(f.name, { format: "testador-api", version: 1, envs: [], items: [f] })
+    $("#fExport").onclick = () => download(f.name, [f])
     $("#fDel").onclick = () => {
       if (!confirm(`Excluir a pasta "${f.name}" e tudo dentro dela?`)) return
       const n = findNode(state.items, f.id); n.list.splice(n.list.indexOf(f), 1)
@@ -1103,18 +1223,20 @@ if (typeof document !== "undefined" && document.getElementById("app")) {
   $("#btnEnv").addEventListener("click", openEnv)
 
   /* ---------- importar / exportar ---------- */
-  function download(name, data) {
-    data.exportedAt = new Date().toISOString()
+  function download(name, items) {
+    // exporta no formato do Insomnia (v4): abre aqui, no Insomnia e em outros clientes que importam Insomnia
+    const data = exportInsomnia(items, state.envs, state.activeEnvId, name)
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
     const a = document.createElement("a")
     a.href = URL.createObjectURL(blob)
-    a.download = (name || "colecao").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-").toLowerCase() + ".testador.json"
+    const file = slugCamel(name || "colecao").replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase()
+    a.download = file + ".insomnia.json"
     a.click()
     setTimeout(() => URL.revokeObjectURL(a.href), 1000)
   }
   $("#btnExport").addEventListener("click", () => {
-    download("colecao", { format: "testador-api", version: 1, envs: state.envs, items: state.items })
-    toast("Coleção exportada")
+    download("Coleção", state.items)
+    toast("Coleção exportada no formato do Insomnia")
   })
   $("#btnImport").addEventListener("click", () => $("#fileInput").click())
   $("#fileInput").addEventListener("change", async e => {
@@ -1152,6 +1274,7 @@ if (typeof document !== "undefined" && document.getElementById("app")) {
         <li>Escolha o método (GET, POST...), escreva a URL e clique em <b>Enviar</b> (ou <code>Ctrl + Enter</code>).</li>
         <li>Pra mandar dados, abra a aba <b>Body</b> e escolha <b>JSON</b>.</li>
         <li>Tudo é salvo sozinho no navegador. Pra levar pra outro computador, use <b>Exportar</b>.</li>
+        <li>O <b>Exportar</b> gera um JSON no formato do <b>Insomnia</b>: o mesmo arquivo abre aqui e no Insomnia.</li>
       </ul>
       <h4>2. Variáveis</h4>
       <ul>
@@ -1171,7 +1294,7 @@ if (typeof document !== "undefined" && document.getElementById("app")) {
         <li><b>Insomnia</b>: exporte a coleção em JSON (formato v4) e importe aqui.</li>
         <li><b>Postman</b>: coleção v2.1 em JSON.</li>
         <li>Arquivos <b>.http</b> da extensão REST Client: dá pra selecionar vários de uma vez. Cada arquivo vira uma pasta.</li>
-        <li>Arquivos exportados por este próprio testador.</li>
+        <li>Respostas encadeadas do Insomnia (<code>{% response ... %}</code>) viram <code>{{nome.response.body.campo}}</code>.</li>
       </ul>
       <h4>5. "Não consegui falar com a API" (CORS)</h4>
       <p>O navegador só deixa esta página chamar a API se a API permitir (isso se chama <b>CORS</b>). No Fastify:</p>

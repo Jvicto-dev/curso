@@ -538,6 +538,37 @@ h2{font-size:clamp(24px,4.4vw,56px); line-height:1.1; font-weight:400; text-shad
 <h4>TEMPO</h4><p class="time">~5 min</p></div>
   </section>
 
+  <section class="slide" style="gap:12px">
+    <div class="eyebrow"><span class="sq"></span>MAIS UM REGISTER NO SERVER.TS</div>
+    <h2 style="font-size:clamp(20px,3.6vw,42px)">E esse tal de CORS?</h2>
+    <div class="sub" data-step="1" style="max-width:52ch">O navegador protege quem usa ele: uma página só chama uma API de <b>outro endereço</b> se a API <b>deixar</b>.</div>
+    <div class="diagram" data-step="2">
+      <div class="node"><span class="ic">◧</span>testador-de-api.html<br><small style="color:var(--muted)">aberto no navegador</small></div>
+      <div class="arrows">
+        <div class="arrow"><span class="line"></span><span class="tip">▶</span><span class="lbl">"posso te chamar?"</span></div>
+        <div class="arrow back"><span class="line"></span><span class="tip">◀</span><span class="lbl">"pode" (CORS liberado)</span></div>
+      </div>
+      <div class="node"><span class="ic">▣</span>API<br><small style="color:var(--muted)">localhost:3333</small></div>
+    </div>
+    <div class="output" data-step="3" style="gap:1px;font-size:clamp(9px,1.2vw,14px);padding:9px 15px">
+      <span class="bar">▤ src/server.ts · npm install @fastify/cors</span>
+      <span><span style="color:var(--c-kw)">import</span> cors <span style="color:var(--c-kw)">from</span> <span style="color:var(--c-strq)">"@fastify/cors"</span></span>
+      <span>&nbsp;</span>
+      <span style="color:var(--accent)">app.register(cors, {</span>
+      <span>&nbsp;&nbsp;origin: <span style="color:var(--blue)">true</span>,</span>
+      <span>&nbsp;&nbsp;methods: [<span style="color:var(--c-strq)">"GET"</span>, <span style="color:var(--c-strq)">"HEAD"</span>, <span style="color:var(--c-strq)">"POST"</span>, <span style="color:var(--c-strq)">"PUT"</span>, <span style="color:var(--c-strq)">"PATCH"</span>, <span style="color:var(--c-strq)">"DELETE"</span>, <span style="color:var(--c-strq)">"OPTIONS"</span>],</span>
+      <span style="color:var(--accent)">})</span>
+    </div>
+    <div class="anatomy-cap" style="gap:5px">
+      <div class="row" data-step="4" style="font-size:clamp(12px,1.6vw,18px)"><span class="blk blk-var chip" style="padding:3px 9px">origin: true</span><div>aceita página de qualquer endereço (bom pra aula)</div></div>
+      <div class="row" data-step="5" style="font-size:clamp(12px,1.6vw,18px)"><span class="blk blk-var chip" style="padding:3px 9px">methods</span><div>sem essa lista, só GET, HEAD e POST passam: PUT e DELETE seriam bloqueados</div></div>
+    </div>
+    <div class="panel accent" data-step="6"><span class="cap">POR QUE O REQUESTS.HTTP FUNCIONAVA SEM ISSO?</span><span style="color:var(--ink)">O REST Client, o Insomnia e o curl <b>não são navegador</b>: eles não pedem licença. O CORS só vale pra páginas abertas no navegador.</span></div>
+    <div class="pnote" hidden><h4>OBJETIVO</h4><p>Explicar em poucos minutos por que essa linha apareceu no server.ts: sem ela, o testador-de-api.html (e qualquer front-end) não consegue chamar a API.</p>
+<h4>CONDUZA ASSIM</h4><ul><li>Mostre o erro de verdade: comente o register do cors, reinicie o servidor e envie uma requisição pelo testador. No console do navegador (F12) aparece "blocked by CORS policy". Descomente e funciona.</li><li>O "posso te chamar?" existe de verdade: antes de um PUT, DELETE ou de um pedido com JSON, o navegador manda uma requisição <b>OPTIONS</b> perguntando. É o "preflight". Não precisa aprofundar.</li><li>CORS não é segurança da API: o curl ignora ele. Ele protege quem está usando o navegador.</li><li><b>origin: true</b> é ótimo pra aula. Em produção, o certo é listar os endereços do front-end, ex.: <b>origin: ["https://meusite.com"]</b>.</li></ul>
+<h4>TEMPO</h4><p class="time">~5 min</p></div>
+  </section>
+
   <section class="slide" style="gap:10px">
     <div class="eyebrow"><span class="sq"></span>MÃO NA MASSA · TODO MUNDO JUNTO</div>
     <h2 style="font-size:clamp(20px,3.6vw,42px)">A rota de login</h2>
@@ -742,6 +773,7 @@ h2{font-size:clamp(24px,4.4vw,56px); line-height:1.1; font-weight:400; text-shad
       <div class="row" data-step="2" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-op)">plugin</span><div><b>jwtSign / jwtVerify is not a function</b>: faltou o <b>app.register(jwt)</b> no server.ts.</div></div>
       <div class="row" data-step="3" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-op)">401</span><div>Login sempre falha: o usuário foi criado <b>antes do hash</b>. Crie um novo.</div></div>
       <div class="row" data-step="4" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-op)">401</span><div>/me sempre falha: esqueceu o <b>Bearer </b> (com espaço) antes do token, ou o token expirou.</div></div>
+      <div class="row" data-step="5" style="font-size:clamp(12px,1.6vw,19px)"><span class="vtag" style="background:var(--c-op)">cors</span><div>Testador mostra "Sem resposta" e o console diz <b>blocked by CORS policy</b>: faltou o <b>app.register(cors)</b>, ou a lista de <b>methods</b>.</div></div>
     </div>
     <div class="pnote" hidden><h4>OBJETIVO</h4><p>Antecipar os erros mais comuns da aula, pra turma reconhecer a mensagem.</p>
 <h4>CONDUZA ASSIM</h4><ul><li>Depois de mudar o .env, reinicie o npm run dev: o tsx watch não recarrega o .env sozinho.</li><li>Se trocar o JWT_SECRET, todos os tokens antigos param de valer (a assinatura não bate mais). Faça login de novo.</li></ul>
@@ -763,7 +795,7 @@ h2{font-size:clamp(24px,4.4vw,56px); line-height:1.1; font-weight:400; text-shad
       <span>|   |   `-- <span style="color:var(--green)">users.routes.ts</span>   <span style="color:var(--muted)">(salva o hash)</span></span>
       <span style="color:var(--c-tag)">|   +-- shared/</span>
       <span>|   |   `-- env/ <span style="color:var(--green)">environments.ts</span> <span style="color:var(--muted)">(JWT_SECRET)</span></span>
-      <span>|   `-- <span style="color:var(--green)">server.ts</span>  <span style="color:var(--muted)">(registra o jwt)</span></span>
+      <span>|   `-- <span style="color:var(--green)">server.ts</span>  <span style="color:var(--muted)">(registra o jwt e o cors)</span></span>
       <span>+-- <span style="color:var(--green)">.env</span>  <span style="color:var(--muted)">(JWT_SECRET)</span></span>
       <span style="color:var(--muted)">`-- package.json</span>
     </div>
