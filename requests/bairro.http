@@ -1,0 +1,39 @@
+@baseUrl = http://localhost:3333
+
+# ============================================================
+# CRUD de bairro
+# ============================================================
+
+### CREATE - cria um bairro
+# @name criarBairro
+POST {{baseUrl}}/bairro
+Content-Type: application/json
+
+{
+    "nome": "Centro",
+    "latitude": -3.7319,
+    "longitude": -38.5267
+}
+
+###
+# O id vem da resposta do POST acima (rode ele antes)
+@bairro_id = {{criarBairro.response.body.bairro_id}}
+
+### READ - lista todos os bairros
+GET {{baseUrl}}/bairro
+
+### READ - busca um bairro pelo id
+GET {{baseUrl}}/bairro/{{bairro_id}}
+
+### UPDATE - atualiza o bairro
+PUT {{baseUrl}}/bairro/{{bairro_id}}
+Content-Type: application/json
+
+{
+    "nome": "Centro Histórico",
+    "latitude": -3.7319,
+    "longitude": -38.5267
+}
+
+### DELETE - remove o bairro (dá 409 se ainda tiver espaço cultural ou artista nele)
+DELETE {{baseUrl}}/bairro/{{bairro_id}}

@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:3333
+
+# ============================================================
+# Login (JWT)
+# ============================================================
+
+### PREPARAÇÃO - cria um usuário pra testar o login
+# (pule se esse usuário já existe com a senha salva em hash)
+POST {{baseUrl}}/usuario
+Content-Type: application/json
+
+{
+    "name": "pedro",
+    "email": "pedro@email.com",
+    "password": "9999"
+}
+
+### LOGIN - devolve um token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "pedro@email.com",
+    "password": "9999",
+    "idade": 25
+}
+
+### ME - rota protegida: usa o token que o login devolveu
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{login.response.body.token}}

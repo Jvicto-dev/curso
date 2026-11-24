@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testador de API</title>
+<style>
+:root{
+  --bg:#15161c; --bg2:#1b1d25; --panel:#20222c; --panel2:#262935; --line:#2f3242; --line2:#3a3e52;
+  --ink:#e9eaf0; --muted:#8d92a6; --faint:#5f647a;
+  --accent:#8b7cf6; --accent-ink:#fff; --accent-soft:rgba(139,124,246,.14);
+  --get:#4fbf7f; --post:#e5ac3c; --put:#4fa3e6; --patch:#b583e8; --delete:#ea6a63; --other:#8d92a6;
+  --ok:#4fbf7f; --redir:#4fa3e6; --warn:#e5ac3c; --err:#ea6a63;
+  --mono:ui-monospace,"JetBrains Mono","Cascadia Code",Consolas,"DejaVu Sans Mono","Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--sans);font-size:14px;color:var(--ink);background:var(--bg);overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+input,select,textarea{background:var(--bg2);border:1px solid var(--line);border-radius:6px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:6px;border:2px solid var(--bg)}
+.hidden{display:none!important}
+
+/* estrutura */
+#app{display:grid;grid-template-rows:48px 1fr;height:100vh}
+header{display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--bg2);border-bottom:1px solid var(--line)}
+.brand{font-weight:700;letter-spacing:.2px;display:flex;align-items:center;gap:8px;margin-right:auto}
+.brand .dot{width:10px;height:10px;border-radius:3px;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.brand small{color:var(--muted);font-weight:400}
+.btn{padding:7px 12px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);white-space:nowrap}
+.btn:hover{border-color:var(--line2);background:#2c2f3d}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--err)}
+.btn.sm{padding:4px 9px;font-size:12.5px}
+.icon-btn{width:26px;height:26px;border-radius:5px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center}
+.icon-btn:hover{background:var(--panel2);color:var(--ink)}
+.env-pick{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px}
+.env-pick select{padding:6px 8px;min-width:140px}
+.layout{display:grid;grid-template-columns:270px 1fr;min-height:0}
+
+/* barra lateral */
+aside{background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.side-actions{display:flex;gap:6px;padding:10px;border-bottom:1px solid var(--line)}
+.side-actions .btn{flex:1;font-size:13px}
+.side-filter{padding:8px 10px;border-bottom:1px solid var(--line)}
+.side-filter input{width:100%;padding:6px 9px;font-size:13px}
+#tree{overflow:auto;flex:1;padding:6px 0 20px}
+.row{display:flex;align-items:center;gap:7px;height:32px;padding-right:6px;cursor:pointer;border-left:2px solid transparent;user-select:none}
+.row:hover{background:var(--panel)}
+.row.active{background:var(--accent-soft);border-left-color:var(--accent)}
+.row .caret{width:12px;color:var(--muted);font-size:11px;flex:none}
+.row .fname{font-weight:600}
+.row .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .acts{display:none;gap:2px}
+.row:hover .acts{display:flex}
+.row input.rename{flex:1;padding:3px 6px;font-size:13px}
+.badge{font-family:var(--mono);font-size:10.5px;font-weight:700;width:44px;flex:none;text-align:right;letter-spacing:.3px}
+.m-GET{color:var(--get)}.m-POST{color:var(--post)}.m-PUT{color:var(--put)}.m-PATCH{color:var(--patch)}.m-DELETE{color:var(--delete)}.m-HEAD,.m-OPTIONS{color:var(--other)}
+.tree-empty{color:var(--muted);padding:16px;font-size:13px;line-height:1.5}
+
+/* área principal */
+main{display:flex;flex-direction:column;min-width:0;min-height:0}
+.welcome{margin:auto;max-width:520px;padding:30px;text-align:center;color:var(--muted);line-height:1.6}
+.welcome h2{color:var(--ink);margin-bottom:8px;font-size:20px}
+.welcome .btns{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.req-head{display:flex;gap:10px;align-items:center;padding:10px 14px 0}
+.req-head input.title{flex:1;background:transparent;border-color:transparent;font-size:16px;font-weight:600;padding:5px 6px}
+.req-head input.title:hover{border-color:var(--line)}
+.reqbar{display:flex;gap:8px;padding:10px 14px 4px}
+.reqbar select{font-family:var(--mono);font-weight:700;padding:0 8px;width:112px}
+.reqbar input{flex:1;font-family:var(--mono);padding:9px 11px;min-width:0}
+.reqbar .btn.primary{padding:0 20px}
+.preview{padding:0 14px 10px 136px;font-family:var(--mono);font-size:12px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preview .miss{color:var(--err)}
+.panes{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0;border-top:1px solid var(--line)}
+.pane{display:flex;flex-direction:column;min-height:0;min-width:0}
+.pane+.pane{border-left:1px solid var(--line)}
+.tabs{display:flex;align-items:center;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);min-height:40px;flex-wrap:wrap}
+.tab{padding:10px 11px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;font-size:13.5px}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--accent)}
+.tab .count{font-size:11px;background:var(--panel2);border-radius:8px;padding:1px 6px;margin-left:4px}
+.tabs .spacer{flex:1}
+.pane-body{flex:1;overflow:auto;padding:12px 14px;min-height:0;display:flex;flex-direction:column;gap:10px}
+
+/* editores */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{padding:5px 12px;font-size:13px;color:var(--muted)}
+.seg button.on{background:var(--accent-soft);color:var(--ink)}
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.toolbar .grow{flex:1}
+.json-state{font-size:12px}
+.json-state.ok{color:var(--ok)}.json-state.bad{color:var(--err)}
+textarea.code{flex:1;min-height:220px;width:100%;resize:none;font-family:var(--mono);font-size:13px;line-height:1.55;padding:10px 12px;tab-size:2;white-space:pre}
+.kv{display:flex;flex-direction:column;gap:6px}
+.kv-row{display:grid;grid-template-columns:22px 1fr 1.4fr 26px;gap:6px;align-items:center}
+.kv-row input[type=text]{padding:6px 8px;font-family:var(--mono);font-size:12.5px;min-width:0}
+.kv-row input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px}
+.kv-head{display:grid;grid-template-columns:22px 1fr 1.4fr 26px;gap:6px;color:var(--faint);font-size:11.5px;text-transform:uppercase;letter-spacing:.6px}
+.hint{color:var(--muted);font-size:12.5px;line-height:1.55}
+.hint code,.help code{font-family:var(--mono);font-size:12px;background:var(--panel2);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;color:var(--muted)}
+.field input,.field select{padding:7px 9px}
+.field input.mono{font-family:var(--mono);font-size:13px}
+
+/* resposta */
+.status-line{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);min-height:44px;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-weight:700;font-size:12.5px;padding:4px 9px;border-radius:5px;background:var(--panel2)}
+.pill.s2{background:rgba(79,191,127,.16);color:var(--ok)}
+.pill.s3{background:rgba(79,163,230,.16);color:var(--redir)}
+.pill.s4{background:rgba(229,172,60,.16);color:var(--warn)}
+.pill.s5,.pill.err{background:rgba(234,106,99,.16);color:var(--err)}
+.meta{color:var(--muted);font-size:12.5px;font-family:var(--mono)}
+pre.out{font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;flex:1;overflow:auto;min-height:0}
+.j-key{color:#9cc4ff}.j-str{color:#e6c07b}.j-num{color:#b5e48c}.j-bool{color:#c792ea}.j-null{color:#ea6a63}
+.hdr-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px}
+.hdr-table td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top;word-break:break-all}
+.hdr-table td:first-child{color:var(--muted);width:38%}
+.error-box{border:1px solid rgba(234,106,99,.45);background:rgba(234,106,99,.08);border-radius:8px;padding:12px 14px;line-height:1.6}
+.error-box b{color:var(--err)}
+.error-box ul{margin:6px 0 0 18px}
+.empty-res{margin:auto;color:var(--faint);text-align:center;line-height:1.7}
+.empty-res kbd{font-family:var(--mono);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--muted)}
+.spinner{width:16px;height:16px;border:2px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* pasta */
+.folder-view{padding:18px 20px;overflow:auto;display:flex;flex-direction:column;gap:16px;max-width:860px}
+.folder-view h3{font-size:14px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+
+/* janela (modal) */
+.overlay{position:fixed;inset:0;background:rgba(5,6,10,.66);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal{background:var(--panel);border:1px solid var(--line2);border-radius:10px;width:min(720px,100%);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.modal-head h2{font-size:16px;flex:1}
+.modal-body{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:14px}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}
+.help h4{font-size:14px;margin:6px 0 2px}
+.help p,.help li{color:#c9ccd8;line-height:1.6;font-size:13.5px}
+.help ul{margin-left:18px}
+.help pre{font-family:var(--mono);font-size:12.5px;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow:auto;color:var(--ink)}
+
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel2);border:1px solid var(--line2);padding:9px 14px;border-radius:8px;opacity:0;pointer-events:none;transition:.2s;z-index:60;font-size:13.5px}
+#toast.show{opacity:1;transform:translateX(-50%)}
+
+@media (max-width:900px){
+  body{overflow:auto}
+  #app{height:auto;min-height:100vh}
+  .layout{grid-template-columns:1fr}
+  aside{max-height:40vh}
+  .panes{grid-template-columns:1fr}
+  .pane+.pane{border-left:none;border-top:1px solid var(--line)}
+  .pane{min-height:340px}
+  .preview{padding-left:14px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><span class="dot"></span>Testador de API <small>· um arquivo só, sem instalar nada</small></div>
+    <div class="env-pick">Ambiente <select id="envSelect" title="Ambiente ativo"></select></div>
+    <button class="btn" id="btnEnv">Variáveis</button>
+    <button class="btn" id="btnImport">Importar</button>
+    <button class="btn" id="btnExport">Exportar</button>
+    <button class="btn" id="btnHelp">Ajuda</button>
+    <input type="file" id="fileInput" class="hidden" multiple accept=".json,.http,.rest,.txt,application/json">
+  </header>
+  <div class="layout">
+    <aside>
+      <div class="side-actions">
+        <button class="btn" id="btnNewReq">+ Requisição</button>
+        <button class="btn" id="btnNewFolder">+ Pasta</button>
+      </div>
+      <div class="side-filter"><input id="filter" placeholder="Filtrar..." autocomplete="off"></div>
+      <div id="tree"></div>
+    </aside>
+    <main id="main"></main>
+  </div>
+</div>
+<div id="modalRoot"></div>
+<div id="toast"></div>
+
+<script>
+/* =====================================================================
+   Testador de API · tudo neste arquivo, sem dependências.
+   Os dados ficam salvos no próprio navegador (localStorage).
+   ===================================================================== */
+
+const STORE_KEY = "testador-api:v1"
+const RESP_KEY = "testador-api:respostas:v1"
+const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
+
+/* ---------- utilidades ---------- */
+function uid() {
+  return Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4)
+}
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]))
+}
+function clone(o) { return JSON.parse(JSON.stringify(o)) }
+function formatBytes(n) {
+  if (n < 1024) return n + " B"
+  if (n < 1024 * 1024) return (n / 1024).toFixed(1) + " KB"
+  return (n / 1024 / 1024).toFixed(1) + " MB"
+}
+
+/* ---------- modelo ---------- */
+function newRequest(p) {
+  return Object.assign({
+    id: uid(), type: "request", name: "Nova requisição", method: "GET", url: "{{baseUrl}}/",
+    headers: [], bodyType: "none", body: "", auth: { type: "none", token: "" }, refName: "",
+  }, p || {})
+}
+function newFolder(p) {
+  return Object.assign({ id: uid(), type: "folder", name: "Nova pasta", open: true, vars: [], children: [] }, p || {})
+}
+function newEnv(p) {
+  return Object.assign({ id: uid(), name: "Novo ambiente", vars: [] }, p || {})
+}
+function defaultState() {
+  const env = newEnv({ name: "Local", vars: [{ key: "baseUrl", value: "http://localhost:3333", enabled: true }] })
+  const folder = newFolder({
+    name: "Exemplos",
+    children: [
+      newRequest({ name: "Lista categorias", method: "GET", url: "{{baseUrl}}/categoria" }),
+      newRequest({
+        name: "Cria categoria", method: "POST", url: "{{baseUrl}}/categoria", refName: "criarCategoria",
+        bodyType: "json", body: '{\n  "nome": "Música"\n}',
+      }),
+      newRequest({ name: "Busca a categoria criada", method: "GET", url: "{{baseUrl}}/categoria/{{criarCategoria.response.body.categoria_id}}" }),
+    ],
+  })
+  return { version: 1, envs: [env], activeEnvId: env.id, items: [folder], activeId: folder.children[0].id }
+}
+
+/* ---------- árvore ---------- */
+function walk(list, fn, parent) {
+  for (const it of list) {
+    fn(it, parent, list)
+    if (it.type === "folder") walk(it.children, fn, it)
+  }
+}
+function findNode(items, id) {
+  let found = null
+  walk(items, (it, parent, list) => { if (it.id === id) found = { item: it, parent: parent || null, list } })
+  return found
+}
+function ancestors(items, id) {
+  // pastas do item até a raiz, da mais próxima pra mais distante
+  const chain = []
+  let node = findNode(items, id)
+  while (node && node.parent) {
+    chain.push(node.parent)
+    node = findNode(items, node.parent.id)
+  }
+  return chain
+}
+function countRequests(list) {
+  let n = 0
+  walk(list, it => { if (it.type === "request") n++ })
+  return n
+}
+
+/* ---------- variáveis ---------- */
+// Ordem de busca de {{nome}}: pastas (da mais próxima pra raiz) -> ambiente ativo.
+// Também entende {{nomeDaRequisicao.response.body.campo}}, {{$guid}}, {{$timestamp}} e {{$randomInt 1 10}}.
+function dynamicVar(expr) {
+  const [name, ...args] = expr.trim().split(/\s+/)
+  if (name === "$guid" || name === "$uuid" || name === "$randomUUID") return crypto.randomUUID()
+  if (name === "$timestamp") return String(Math.floor(Date.now() / 1000))
+  if (name === "$isoTimestamp") return new Date().toISOString()
+  if (name === "$randomInt") {
+    const min = Number(args[0] ?? 0), max = Number(args[1] ?? 1000)
+    return String(Math.floor(min + Math.random() * (max - min)))
+  }
+  return undefined
+}
+function getPath(obj, path) {
+  let p = path.trim()
+  if (p.startsWith("$")) p = p.slice(1)
+  if (p.startsWith(".")) p = p.slice(1)
+  if (!p) return obj
+  const parts = p.replace(/\[(\d+)\]/g, ".$1").split(".").filter(Boolean)
+  let cur = obj
+  for (const k of parts) {
+    if (cur == null) return undefined
+    cur = cur[k]
+  }
+  return cur
+}
+function findByRefName(ctx, name, fromId) {
+  // procura primeiro na mesma pasta, depois em qualquer lugar
+  const node = findNode(ctx.items, fromId)
+  const siblings = node ? node.list : []
+  let hit = siblings.find(it => it.type === "request" && it.refName === name)
+  if (!hit) walk(ctx.items, it => { if (!hit && it.type === "request" && it.refName === name) hit = it })
+  return hit || null
+}
+function responseRef(ctx, name, part, path, fromId, problems) {
+  const req = findByRefName(ctx, name, fromId)
+  if (!req) { problems.push(`Nenhuma requisição tem o nome de referência "${name}".`); return undefined }
+  const res = ctx.responses[req.id]
+  if (!res || res.error) { problems.push(`Rode antes a requisição "${req.name}" (${name}): ainda não tem resposta dela.`); return undefined }
+  if (part === "headers") {
+    const h = (res.headers || []).find(([k]) => k.toLowerCase() === path.trim().toLowerCase())
+    if (!h) problems.push(`A resposta de "${req.name}" não tem o header "${path}".`)
+    return h ? h[1] : undefined
+  }
+  let data
+  try { data = JSON.parse(res.body) } catch { data = res.body }
+  const v = getPath(data, path)
+  if (v === undefined) { problems.push(`A resposta de "${req.name}" não tem o campo "${path}".`); return undefined }
+  return typeof v === "object" ? JSON.stringify(v) : String(v)
+}
+function lookupVar(ctx, expr, fromId, depth, problems) {
+  if (expr.startsWith("$")) return dynamicVar(expr)
+  if (expr.startsWith("_.")) expr = expr.slice(2) // formato do Insomnia: {{ _.baseUrl }}
+  const ref = expr.match(/^([\w-]+)\.response\.(body|headers)(?:\.(.*))?$/)
+  if (ref) return responseRef(ctx, ref[1], ref[2], ref[3] || "", fromId, problems)
+  const scopes = ancestors(ctx.items, fromId).map(f => f.vars || [])
+  const env = ctx.envs.find(e => e.id === ctx.activeEnvId)
+  if (env) scopes.push(env.vars)
+  for (const vars of scopes) {
+    const hit = vars.find(v => v.enabled !== false && v.key.trim() === expr)
+    if (hit) return resolveVars(ctx, hit.value, fromId, depth + 1, problems)
+  }
+  return undefined
+}
+function resolveVars(ctx, text, fromId, depth, problems) {
+  depth = depth || 0
+  problems = problems || []
+  if (typeof text !== "string") return text
+  if (depth > 10) { problems.push("Variáveis se chamando em círculo."); return text }
+  return text.replace(/\{\{\s*([^{}]+?)\s*\}\}/g, (whole, expr) => {
+    const v = lookupVar(ctx, expr.trim(), fromId, depth, problems)
+    return v === undefined ? whole : v
+  })
+}
+
+/* ---------- montar a requisição ---------- */
+function hasHeader(headers, name) {
+  return Object.keys(headers).some(k => k.toLowerCase() === name.toLowerCase())
+}
+function buildRequest(ctx, req) {
+  const problems = []
+  const r = (t) => resolveVars(ctx, t, req.id, 0, problems)
+  const url = r(req.url.trim())
+  const headers = {}
+  for (const h of req.headers || []) {
+    if (h.enabled === false || !h.key.trim()) continue
+    headers[r(h.key.trim())] = r(h.value)
+  }
+  if (req.auth && req.auth.type === "bearer" && req.auth.token.trim()) {
+    headers["Authorization"] = "Bearer " + r(req.auth.token.trim())
+  }
+  let body
+  const canHaveBody = !["GET", "HEAD"].includes(req.method)
+  if (canHaveBody && req.bodyType !== "none" && req.body.trim()) {
+    body = r(req.body)
+    if (req.bodyType === "json") {
+      try { JSON.parse(body) } catch (e) { problems.push("O body não é um JSON válido: " + e.message) }
+    }
+    if (!hasHeader(headers, "Content-Type")) {
+      headers["Content-Type"] = req.bodyType === "json" ? "application/json" : "text/plain"
+    }
+  }
+  // sobrou alguma {{variavel}} sem valor?
+  const leftovers = new Set()
+  for (const t of [url, body || "", ...Object.keys(headers), ...Object.values(headers)]) {
+    for (const m of String(t).matchAll(/\{\{\s*([^{}]+?)\s*\}\}/g)) leftovers.add(m[1])
+  }
+  for (const name of leftovers) {
+    if (!/\.response\./.test(name)) problems.push(`A variável {{${name}}} não existe no ambiente nem na pasta.`)
+  }
+  if (!problems.length) {
+    try {
+      const u = new URL(url)
+      if (!/^https?:$/.test(u.protocol)) problems.push("A URL precisa começar com http:// ou https://")
+    } catch { problems.push(`URL inválida: "${url}". Ela precisa começar com http:// ou https://`) }
+  }
+  return { url, method: req.method, headers, body, problems: [...new Set(problems)] }
+}
+function toCurl(built) {
+  const q = s => "'" + String(s).replace(/'/g, "'\\''") + "'"
+  const parts = ["curl", "-X", built.method, q(built.url)]
+  for (const [k, v] of Object.entries(built.headers)) parts.push("-H", q(k + ": " + v))
+  if (built.body !== undefined) parts.push("--data-raw", q(built.body))
+  return parts.join(" ")
+}
+
+/* ---------- importar ---------- */
+const HTTP_METHOD_LINE = /^(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(\S+)(?:\s+HTTP\/[\d.]+)?\s*$/i
+
+function parseHttpFile(text, fileName) {
+  // Lê arquivos .http / .rest (formato da extensão REST Client do VS Code)
+  const folder = newFolder({ name: (fileName || "importado").replace(/\.(http|rest|txt)$/i, "") })
+  const blocks = []
+  let current = { title: "", lines: [] }
+  for (const line of text.split(/\r?\n/)) {
+    if (/^###/.test(line)) {
+      blocks.push(current)
+      current = { title: line.replace(/^#+/, "").trim(), lines: [] }
+    } else current.lines.push(line)
+  }
+  blocks.push(current)
+
+  for (const block of blocks) {
+    let refName = "", req = null, stage = "pre", bodyLines = [], lastComment = ""
+    for (const raw of block.lines) {
+      const line = raw.replace(/\s+$/, "")
+      if (stage === "pre") {
+        const t = line.trim()
+        if (!t) continue
+        const nameMatch = t.match(/^(?:#|\/\/)\s*@name\s+([\w-]+)/)
+        if (nameMatch) { refName = nameMatch[1]; continue }
+        if (/^(#|\/\/)/.test(t)) { lastComment = lastComment || t.replace(/^(#|\/\/)\s*/, ""); continue }
+        const varMatch = t.match(/^@([\w-]+)\s*=\s*(.*)$/)
+        if (varMatch) {
+          const vars = folder.vars
+          const existing = vars.find(v => v.key === varMatch[1])
+          if (existing) existing.value = varMatch[2]
+          else vars.push({ key: varMatch[1], value: varMatch[2], enabled: true })
+          continue
+        }
+        const m = t.match(HTTP_METHOD_LINE)
+        const urlOnly = !m && /^(https?:\/\/|\{\{)/.test(t)
+        if (m || urlOnly) {
+          const method = m ? m[1].toUpperCase() : "GET"
+          const url = m ? m[2] : t
+          req = newRequest({ method, url, refName, name: block.title || lastComment || `${method} ${url}` })
+          stage = "headers"
+        }
+        continue
+      }
+      if (stage === "headers") {
+        if (!line.trim()) { stage = "body"; continue }
+        const h = line.match(/^([\w-]+)\s*:\s*(.*)$/)
+        if (h) req.headers.push({ key: h[1], value: h[2], enabled: true })
+        continue
+      }
+      bodyLines.push(raw)
+    }
+    if (!req) continue
+    while (bodyLines.length && !bodyLines[bodyLines.length - 1].trim()) bodyLines.pop()
+    const body = bodyLines.join("\n")
+    if (body.trim()) {
+      const ct = (req.headers.find(h => h.key.toLowerCase() === "content-type") || {}).value || ""
+      req.bodyType = /json/i.test(ct) || /^\s*[{[]/.test(body) ? "json" : "text"
+      req.body = body
+    }
+    folder.children.push(req)
+  }
+  return folder
+}
+
+function convInsomnia(s) {
+  return String(s ?? "").replace(/\{\{\s*_\.([\w-]+)\s*\}\}/g, "{{$1}}")
+}
+function importInsomnia(data) {
+  // Exportação do Insomnia (formato v4, JSON)
+  const res = data.resources || []
+  const byParent = {}
+  for (const r of res) (byParent[r.parentId] = byParent[r.parentId] || []).push(r)
+  const sortKey = r => (typeof r.metaSortKey === "number" ? r.metaSortKey : 0)
+  const toVars = obj => Object.entries(obj || {}).map(([key, value]) => ({
+    key, value: typeof value === "object" ? JSON.stringify(value) : String(value), enabled: true,
+  }))
+  function build(parentId) {
+    return (byParent[parentId] || []).slice().sort((a, b) => sortKey(a) - sortKey(b)).flatMap(r => {
+      if (r._type === "request_group") {
+        return [newFolder({ name: r.name || "Pasta", vars: toVars(r.environment), children: build(r._id) })]
+      }
+      if (r._type === "request") {
+        const body = r.body || {}
+        const auth = r.authentication || {}
+        return [newRequest({
+          name: r.name || "Requisição",
+          method: (r.method || "GET").toUpperCase(),
+          url: convInsomnia(r.url),
+          headers: (r.headers || []).map(h => ({ key: h.name || "", value: convInsomnia(h.value), enabled: !h.disabled })),
+          bodyType: body.text ? (/json/i.test(body.mimeType || "") ? "json" : "text") : "none",
+          body: convInsomnia(body.text || ""),
+          auth: auth.type === "bearer" ? { type: "bearer", token: convInsomnia(auth.token) } : { type: "none", token: "" },
+        })]
+      }
+      return []
+    })
+  }
+  const items = [], envs = []
+  for (const ws of res.filter(r => r._type === "workspace")) {
+    items.push(newFolder({ name: ws.name || "Insomnia", children: build(ws._id) }))
+    const base = res.find(r => r._type === "environment" && r.parentId === ws._id)
+    if (base) {
+      const subs = res.filter(r => r._type === "environment" && r.parentId === base._id)
+      if (!subs.length) envs.push(newEnv({ name: ws.name || "Insomnia", vars: toVars(base.data) }))
+      for (const sub of subs) envs.push(newEnv({ name: sub.name || "Ambiente", vars: toVars(Object.assign({}, base.data, sub.data)) }))
+    }
+  }
+  return { items, envs }
+}
+
+function importPostman(data) {
+  // Coleção do Postman (formato v2.0 / v2.1)
+  function build(list) {
+    return (list || []).map(it => {
+      if (Array.isArray(it.item)) return newFolder({ name: it.name || "Pasta", children: build(it.item) })
+      const rq = it.request || {}
+      const url = typeof rq.url === "string" ? rq.url : (rq.url && rq.url.raw) || ""
+      const raw = rq.body && rq.body.mode === "raw" ? rq.body.raw || "" : ""
+      const lang = rq.body && rq.body.options && rq.body.options.raw && rq.body.options.raw.language
+      const bearer = rq.auth && rq.auth.type === "bearer" ? (rq.auth.bearer || []).find(b => b.key === "token") : null
+      return newRequest({
+        name: it.name || "Requisição",
+        method: (rq.method || "GET").toUpperCase(),
+        url,
+        headers: (rq.header || []).map(h => ({ key: h.key || "", value: h.value || "", enabled: !h.disabled })),
+        bodyType: raw ? (lang === "json" || /^\s*[{[]/.test(raw) ? "json" : "text") : "none",
+        body: raw,
+        auth: bearer ? { type: "bearer", token: String(bearer.value || "") } : { type: "none", token: "" },
+      })
+    })
+  }
+  const name = (data.info && data.info.name) || "Postman"
+  const vars = (data.variable || []).map(v => ({ key: v.key, value: String(v.value ?? ""), enabled: !v.disabled }))
+  return { items: [newFolder({ name, vars, children: build(data.item) })], envs: [] }
+}
+
+function importText(text, fileName) {
+  // Descobre o formato e devolve { items, envs }
+  let data = null
+  try { data = JSON.parse(text) } catch { /* não é JSON: tenta .http */ }
+  if (data && data.format === "testador-api") {
+    const fresh = clone(data)
+    walk(fresh.items || [], it => { it.id = uid() })
+    for (const e of fresh.envs || []) e.id = uid()
+    return { items: fresh.items || [], envs: fresh.envs || [], kind: "Testador de API" }
+  }
+  if (data && Array.isArray(data.resources)) return Object.assign(importInsomnia(data), { kind: "Insomnia" })
+  if (data && data.info && Array.isArray(data.item)) return Object.assign(importPostman(data), { kind: "Postman" })
+  if (data) throw new Error("Esse JSON não parece uma exportação do Testador, do Insomnia (v4) ou do Postman.")
+  const folder = parseHttpFile(text, fileName)
+  if (!folder.children.length) throw new Error("Não achei nenhuma requisição no arquivo.")
+  return { items: [folder], envs: [], kind: "arquivo .http" }
+}
+
+/* =====================================================================
+   Interface
+   ===================================================================== */
+if (typeof document !== "undefined" && document.getElementById("app")) {
+  let state = loadState()
+  let responses = loadResponses()
+  const ui = { reqTab: "body", resTab: "body", filter: "", sending: null, renaming: null }
+
+  const $ = sel => document.querySelector(sel)
+  const ctx = () => ({ items: state.items, envs: state.envs, activeEnvId: state.activeEnvId, responses })
+
+  function loadState() {
+    try {
+      const s = JSON.parse(localStorage.getItem(STORE_KEY))
+      if (s && Array.isArray(s.items) && Array.isArray(s.envs)) return s
+    } catch { }
+    return defaultState()
+  }
+  function loadResponses() {
+    try { return JSON.parse(localStorage.getItem(RESP_KEY)) || {} } catch { return {} }
+  }
+  let saveTimer
+  function save() {
+    clearTimeout(saveTimer)
+    saveTimer = setTimeout(() => {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(state)) } catch { toast("Não consegui salvar no navegador.") }
+    }, 250)
+  }
+  function saveResponses() {
+    try { localStorage.setItem(RESP_KEY, JSON.stringify(responses)) }
+    catch { /* respostas muito grandes: guarda só na memória */ }
+  }
+  function toast(msg) {
+    const t = $("#toast")
+    t.textContent = msg
+    t.classList.add("show")
+    clearTimeout(t._h)
+    t._h = setTimeout(() => t.classList.remove("show"), 2200)
+  }
+  function active() {
+    const n = state.activeId && findNode(state.items, state.activeId)
+    return n ? n.item : null
+  }
+  function targetList() {
+    // onde criar coisas novas: dentro da pasta ativa, ou na pasta da requisição ativa
+    const n = state.activeId && findNode(state.items, state.activeId)
+    if (!n) return state.items
+    if (n.item.type === "folder") { n.item.open = true; return n.item.children }
+    return n.parent ? n.parent.children : state.items
+  }
+  function select(id) { state.activeId = id; save(); render() }
+
+  /* ---------- barra lateral ---------- */
+  function matchesFilter(it) {
+    if (!ui.filter) return true
+    const f = ui.filter.toLowerCase()
+    if (it.type === "request") return (it.name + " " + it.url + " " + it.method).toLowerCase().includes(f)
+    return it.name.toLowerCase().includes(f) || it.children.some(matchesFilter)
+  }
+  function treeHtml(list, depth) {
+    return list.filter(matchesFilter).map(it => {
+      const pad = 10 + depth * 14
+      const on = state.activeId === it.id ? " active" : ""
+      const nameHtml = ui.renaming === it.id
+        ? `<input class="rename" data-rename="${it.id}" value="${esc(it.name)}">`
+        : `<span class="name${it.type === "folder" ? " fname" : ""}" title="${esc(it.name)}">${esc(it.name)}</span>`
+      if (it.type === "folder") {
+        const open = it.open || !!ui.filter
+        return `<div class="row${on}" data-id="${it.id}" style="padding-left:${pad}px">
+            <span class="caret" data-act="toggle">${open ? "▾" : "▸"}</span>${nameHtml}
+            <span class="acts">
+              <button class="icon-btn" data-act="add" title="Nova requisição aqui">+</button>
+              <button class="icon-btn" data-act="rename" title="Renomear">✎</button>
+              <button class="icon-btn" data-act="delete" title="Excluir pasta">✕</button>
+            </span></div>${open ? treeHtml(it.children, depth + 1) : ""}`
+      }
+      return `<div class="row${on}" data-id="${it.id}" style="padding-left:${pad}px">
+          <span class="badge m-${it.method}">${it.method === "DELETE" ? "DEL" : it.method === "OPTIONS" ? "OPT" : it.method}</span>${nameHtml}
+          <span class="acts">
+            <button class="icon-btn" data-act="duplicate" title="Duplicar">⧉</button>
+            <button class="icon-btn" data-act="rename" title="Renomear">✎</button>
+            <button class="icon-btn" data-act="delete" title="Excluir">✕</button>
+          </span></div>`
+    }).join("")
+  }
+  function renderTree() {
+    const html = treeHtml(state.items, 0)
+    $("#tree").innerHTML = html || `<div class="tree-empty">${ui.filter ? "Nada encontrado." : "Nenhuma requisição ainda. Clique em <b>+ Requisição</b> ou importe um arquivo."}</div>`
+    const input = $("#tree input.rename")
+    if (input) { input.focus(); input.select() }
+  }
+  $("#tree").addEventListener("click", e => {
+    const row = e.target.closest(".row")
+    if (!row || e.target.matches("input.rename")) return
+    const id = row.dataset.id
+    const node = findNode(state.items, id)
+    if (!node) return
+    const act = e.target.closest("[data-act]")?.dataset.act
+    if (act === "toggle") { node.item.open = !node.item.open; save(); renderTree(); return }
+    if (act === "add") {
+      const req = newRequest()
+      node.item.children.push(req); node.item.open = true
+      select(req.id); return
+    }
+    if (act === "rename") { ui.renaming = id; renderTree(); return }
+    if (act === "duplicate") {
+      const copy = clone(node.item); copy.id = uid(); copy.name += " (cópia)"; copy.refName = ""
+      node.list.splice(node.list.indexOf(node.item) + 1, 0, copy)
+      select(copy.id); return
+    }
+    if (act === "delete") {
+      const what = node.item.type === "folder"
+        ? `a pasta "${node.item.name}" e as ${countRequests(node.item.children)} requisições dentro dela`
+        : `a requisição "${node.item.name}"`
+      if (!confirm(`Excluir ${what}?`)) return
+      node.list.splice(node.list.indexOf(node.item), 1)
+      if (state.activeId === id || !findNode(state.items, state.activeId)) state.activeId = null
+      save(); render(); return
+    }
+    if (node.item.type === "folder" && state.activeId === id) node.item.open = !node.item.open
+    select(id)
+  })
+  $("#tree").addEventListener("dblclick", e => {
+    const row = e.target.closest(".row")
+    if (row && !e.target.closest("[data-act]")) { ui.renaming = row.dataset.id; renderTree() }
+  })
+  function finishRename(input, keep) {
+    const node = findNode(state.items, input.dataset.rename)
+    if (node && keep && input.value.trim()) node.item.name = input.value.trim()
+    ui.renaming = null
+    save(); render()
+  }
+  $("#tree").addEventListener("keydown", e => {
+    if (!e.target.matches("input.rename")) return
+    if (e.key === "Enter") finishRename(e.target, true)
+    if (e.key === "Escape") finishRename(e.target, false)
+  })
+  $("#tree").addEventListener("focusout", e => {
+    if (e.target.matches("input.rename") && ui.renaming) finishRename(e.target, true)
+  })
+  $("#filter").addEventListener("input", e => { ui.filter = e.target.value.trim(); renderTree() })
+  $("#btnNewReq").addEventListener("click", () => {
+    const req = newRequest(); targetList().push(req); select(req.id)
+    setTimeout(() => $("#urlInput")?.focus(), 0)
+  })
+  $("#btnNewFolder").addEventListener("click", () => {
+    const f = newFolder(); state.items.push(f); state.activeId = f.id; ui.renaming = f.id; save(); render()
+  })
+
+  /* ---------- editor de chave/valor (headers e variáveis) ---------- */
+  function kvHtml(list, kind, keyPh, valPh) {
+    return `<div class="kv" data-kv="${kind}">
+      <div class="kv-head"><span></span><span>${keyPh}</span><span>${valPh}</span><span></span></div>
+      ${list.map((row, i) => `<div class="kv-row">
+        <input type="checkbox" data-i="${i}" data-f="enabled" ${row.enabled === false ? "" : "checked"} title="Ativo">
+        <input type="text" data-i="${i}" data-f="key" value="${esc(row.key)}" placeholder="${keyPh}" spellcheck="false">
+        <input type="text" data-i="${i}" data-f="value" value="${esc(row.value)}" placeholder="${valPh}" spellcheck="false">
+        <button class="icon-btn" data-i="${i}" data-f="remove" title="Remover">✕</button>
+      </div>`).join("")}
+      <div><button class="btn sm" data-f="add">+ Adicionar</button></div>
+    </div>`
+  }
+  function bindKv(root, list, onChange) {
+    root.addEventListener("input", e => {
+      const i = e.target.dataset.i, f = e.target.dataset.f
+      if (i === undefined || !["key", "value"].includes(f)) return
+      list[i][f] = e.target.value; save(); onChange && onChange(false)
+    })
+    root.addEventListener("change", e => {
+      if (e.target.dataset.f !== "enabled") return
+      list[e.target.dataset.i].enabled = e.target.checked; save(); onChange && onChange(false)
+    })
+    root.addEventListener("click", e => {
+      const b = e.target.closest("[data-f]")
+      if (!b || b.tagName !== "BUTTON") return
+      if (b.dataset.f === "add") list.push({ key: "", value: "", enabled: true })
+      if (b.dataset.f === "remove") list.splice(Number(b.dataset.i), 1)
+      save(); onChange && onChange(true)
+    })
+  }
+
+  /* ---------- tela principal ---------- */
+  function render() {
+    renderEnvSelect()
+    renderTree()
+    const it = active()
+    if (!it) return renderWelcome()
+    if (it.type === "folder") return renderFolder(it)
+    renderRequest(it)
+  }
+  function renderWelcome() {
+    $("#main").innerHTML = `<div class="welcome">
+      <h2>Testador de API</h2>
+      <p>Crie uma requisição na barra da esquerda, ou importe uma coleção do Insomnia, do Postman ou arquivos <code>.http</code>.</p>
+      <div class="btns">
+        <button class="btn primary" id="wNew">+ Nova requisição</button>
+        <button class="btn" id="wImport">Importar arquivo</button>
+        <button class="btn" id="wHelp">Como usar</button>
+      </div></div>`
+    $("#wNew").onclick = () => $("#btnNewReq").click()
+    $("#wImport").onclick = () => $("#fileInput").click()
+    $("#wHelp").onclick = openHelp
+  }
+
+  function renderFolder(f) {
+    $("#main").innerHTML = `<div class="folder-view">
+      <div class="field"><label>Nome da pasta</label><input id="fName" value="${esc(f.name)}"></div>
+      <div>
+        <h3>Variáveis da pasta</h3>
+        <p class="hint">Valem pra todas as requisições desta pasta e têm prioridade sobre as do ambiente.
+        Use com <code>{{nome}}</code>. Um valor pode ler a resposta de outra requisição: <code>{{login.response.body.token}}</code>.</p>
+      </div>
+      <div id="fVars">${kvHtml(f.vars, "vars", "nome", "valor")}</div>
+      <div class="toolbar">
+        <button class="btn" id="fAdd">+ Requisição nesta pasta</button>
+        <button class="btn" id="fSub">+ Subpasta</button>
+        <button class="btn" id="fExport">Exportar só esta pasta</button>
+        <span class="grow"></span>
+        <button class="btn danger" id="fDel">Excluir pasta</button>
+      </div>
+      <p class="hint">${countRequests(f.children)} requisições dentro desta pasta.</p>
+    </div>`
+    $("#fName").addEventListener("input", e => { f.name = e.target.value; save(); renderTree() })
+    bindKv($("#fVars"), f.vars, structural => structural && renderFolder(f))
+    $("#fAdd").onclick = () => { const r = newRequest(); f.children.push(r); f.open = true; select(r.id) }
+    $("#fSub").onclick = () => { const s = newFolder(); f.children.push(s); f.open = true; ui.renaming = s.id; select(s.id) }
+    $("#fExport").onclick = () => download(f.name, { format: "testador-api", version: 1, envs: [], items: [f] })
+    $("#fDel").onclick = () => {
+      if (!confirm(`Excluir a pasta "${f.name}" e tudo dentro dela?`)) return
+      const n = findNode(state.items, f.id); n.list.splice(n.list.indexOf(f), 1)
+      state.activeId = null; save(); render()
+    }
+  }
+
+  function renderRequest(req) {
+    $("#main").innerHTML = `
+      <div class="req-head"><input class="title" id="reqName" value="${esc(req.name)}" title="Nome da requisição"></div>
+      <div class="reqbar">
+        <select id="methodSel" class="m-${req.method}">${METHODS.map(m => `<option ${m === req.method ? "selected" : ""}>${m}</option>`).join("")}</select>
+        <input id="urlInput" value="${esc(req.url)}" placeholder="{{baseUrl}}/rota" spellcheck="false" autocomplete="off">
+        <button class="btn primary" id="sendBtn">Enviar</button>
+      </div>
+      <div class="preview" id="preview"></div>
+      <div class="panes">
+        <section class="pane">
+          <div class="tabs" id="reqTabs"></div>
+          <div class="pane-body" id="reqBody"></div>
+        </section>
+        <section class="pane">
+          <div class="status-line" id="resStatus"></div>
+          <div class="tabs" id="resTabs"></div>
+          <div class="pane-body" id="resBody"></div>
+        </section>
+      </div>`
+    $("#reqName").addEventListener("input", e => { req.name = e.target.value; save(); renderTree() })
+    $("#methodSel").addEventListener("change", e => {
+      req.method = e.target.value; e.target.className = "m-" + req.method
+      save(); renderTree(); renderReqTabs(req)
+    })
+    $("#urlInput").addEventListener("input", e => { req.url = e.target.value; save(); renderPreview(req) })
+    $("#urlInput").addEventListener("keydown", e => { if (e.key === "Enter") send(req) })
+    $("#sendBtn").addEventListener("click", () => {
+      if (!ui.sending) return send(req)
+      if (ui.sending.reqId === req.id) return cancelSend()
+      toast("Espere a outra requisição terminar")
+    })
+    renderPreview(req)
+    renderReqTabs(req)
+    renderResponse(req)
+  }
+
+  function renderPreview(req) {
+    const built = buildRequest(ctx(), req)
+    const html = esc(built.url).replace(/\{\{[^{}]+\}\}/g, m => `<span class="miss">${m}</span>`)
+    $("#preview").innerHTML = "→ " + html
+    $("#preview").title = built.url
+  }
+
+  function renderReqTabs(req) {
+    const enabledHeaders = req.headers.filter(h => h.enabled !== false && h.key.trim()).length
+    const tabs = [["body", "Body"], ["headers", `Headers${enabledHeaders ? `<span class="count">${enabledHeaders}</span>` : ""}`], ["auth", "Auth"], ["more", "Mais"]]
+    $("#reqTabs").innerHTML = tabs.map(([k, label]) => `<button class="tab${ui.reqTab === k ? " on" : ""}" data-tab="${k}">${label}</button>`).join("")
+    $("#reqTabs").onclick = e => {
+      const t = e.target.closest("[data-tab]"); if (!t) return
+      ui.reqTab = t.dataset.tab; renderReqTabs(req)
+    }
+    const body = $("#reqBody")
+    if (ui.reqTab === "body") {
+      const noBody = ["GET", "HEAD"].includes(req.method)
+      body.innerHTML = `
+        <div class="toolbar">
+          <div class="seg" id="bodyType">
+            ${[["none", "Sem body"], ["json", "JSON"], ["text", "Texto"]].map(([k, l]) => `<button data-bt="${k}" class="${req.bodyType === k ? "on" : ""}">${l}</button>`).join("")}
+          </div>
+          <span class="grow"></span>
+          <span class="json-state" id="jsonState"></span>
+          ${req.bodyType === "json" ? `<button class="btn sm" id="fmtBtn">Formatar JSON</button>` : ""}
+        </div>
+        ${noBody && req.bodyType !== "none" ? `<p class="hint">Requisições ${req.method} não enviam body. Troque o método pra POST, PUT ou PATCH.</p>` : ""}
+        ${req.bodyType === "none"
+          ? `<p class="hint">Essa requisição não envia body. Pra mandar dados (POST, PUT, PATCH), escolha <b>JSON</b>.</p>`
+          : `<textarea class="code" id="bodyInput" spellcheck="false" placeholder='${req.bodyType === "json" ? '{\n  "nome": "valor"\n}' : "texto do body"}'>${esc(req.body)}</textarea>`}`
+      body.querySelector("#bodyType").onclick = e => {
+        const b = e.target.closest("[data-bt]"); if (!b) return
+        req.bodyType = b.dataset.bt
+        if (req.bodyType === "json" && !req.body.trim()) req.body = "{\n  \n}"
+        save(); renderReqTabs(req); renderPreview(req)
+      }
+      const ta = body.querySelector("#bodyInput")
+      if (ta) {
+        const check = () => {
+          const st = $("#jsonState"); if (!st || req.bodyType !== "json") return
+          if (!req.body.trim()) { st.textContent = ""; return }
+          try {
+            JSON.parse(resolveVars(ctx(), req.body, req.id))
+            st.textContent = "✓ JSON válido"; st.className = "json-state ok"
+          } catch (err) { st.textContent = "✗ " + err.message; st.className = "json-state bad" }
+        }
+        ta.addEventListener("input", () => { req.body = ta.value; save(); check() })
+        ta.addEventListener("keydown", e => {
+          if (e.key === "Tab") {
+            e.preventDefault()
+            const s = ta.selectionStart
+            ta.setRangeText("  ", s, ta.selectionEnd, "end")
+            req.body = ta.value; save()
+          }
+        })
+        check()
+      }
+      const fmt = body.querySelector("#fmtBtn")
+      if (fmt) fmt.onclick = () => {
+        try { req.body = JSON.stringify(JSON.parse(req.body), null, 2); save(); renderReqTabs(req) }
+        catch { toast("Não dá pra formatar: o JSON tem erro (ou usa {{variáveis}} fora de aspas).") }
+      }
+    }
+    if (ui.reqTab === "headers") {
+      body.innerHTML = `${kvHtml(req.headers, "headers", "header", "valor")}
+        <p class="hint">O <code>Content-Type</code> é colocado sozinho quando tem body.
+        Pra token, use a aba <b>Auth</b>. Valores aceitam <code>{{variáveis}}</code>.</p>`
+      bindKv(body.querySelector(".kv"), req.headers, structural => {
+        if (structural) renderReqTabs(req)
+        else {
+          const n = req.headers.filter(h => h.enabled !== false && h.key.trim()).length
+          const tab = $('#reqTabs [data-tab="headers"]')
+          if (tab) tab.innerHTML = `Headers${n ? `<span class="count">${n}</span>` : ""}`
+        }
+        renderPreview(req)
+      })
+    }
+    if (ui.reqTab === "auth") {
+      body.innerHTML = `
+        <div class="field"><label>Tipo</label>
+          <select id="authType">
+            <option value="none" ${req.auth.type === "none" ? "selected" : ""}>Sem autenticação</option>
+            <option value="bearer" ${req.auth.type === "bearer" ? "selected" : ""}>Bearer Token (JWT)</option>
+          </select></div>
+        ${req.auth.type === "bearer" ? `
+          <div class="field"><label>Token</label>
+            <input class="mono" id="authToken" value="${esc(req.auth.token)}" placeholder="{{login.response.body.token}}" spellcheck="false"></div>
+          <p class="hint">Vai no header <code>Authorization: Bearer &lt;token&gt;</code>.
+          Dica: dê o nome de referência <code>login</code> pra sua requisição de login (aba <b>Mais</b>) e use
+          <code>{{login.response.body.token}}</code> aqui. Assim o token mais novo é usado sozinho.</p>` : ""}`
+      body.querySelector("#authType").onchange = e => { req.auth.type = e.target.value; save(); renderReqTabs(req) }
+      const tk = body.querySelector("#authToken")
+      if (tk) tk.addEventListener("input", e => { req.auth.token = e.target.value; save() })
+    }
+    if (ui.reqTab === "more") {
+      body.innerHTML = `
+        <div class="field"><label>Nome de referência (pra usar a resposta desta requisição em outras)</label>
+          <input class="mono" id="refName" value="${esc(req.refName)}" placeholder="ex.: criarCategoria" spellcheck="false"></div>
+        <p class="hint" id="refHint"></p>
+        <div class="toolbar"><button class="btn sm" id="curlBtn">Copiar como cURL</button></div>
+        <p class="hint">O cURL serve pra rodar a mesma requisição no terminal (Linux, Mac ou Git Bash).</p>`
+      const hint = () => {
+        $("#refHint").innerHTML = req.refName
+          ? `Em outra requisição: <code>{{${esc(req.refName)}.response.body.campo}}</code>. Ex.: <code>{{${esc(req.refName)}.response.body.categoria_id}}</code>`
+          : "Sem nome de referência, nenhuma outra requisição consegue ler a resposta desta."
+      }
+      $("#refName").addEventListener("input", e => { req.refName = e.target.value.replace(/[^\w-]/g, ""); e.target.value = req.refName; save(); hint() })
+      $("#curlBtn").onclick = () => {
+        const built = buildRequest(ctx(), req)
+        copy(toCurl(built), "cURL copiado")
+      }
+      hint()
+    }
+  }
+
+  /* ---------- resposta ---------- */
+  function highlightJson(text) {
+    // colore pedaço por pedaço do texto original e escapa cada um (escapar antes quebraria as aspas)
+    const re = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(?:true|false)\b|\bnull\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g
+    let out = "", last = 0, m
+    while ((m = re.exec(text))) {
+      out += esc(text.slice(last, m.index))
+      const tok = m[0]
+      let cls = "j-num"
+      if (tok[0] === '"') cls = /:\s*$/.test(tok) ? "j-key" : "j-str"
+      else if (tok === "true" || tok === "false") cls = "j-bool"
+      else if (tok === "null") cls = "j-null"
+      out += `<span class="${cls}">${esc(tok)}</span>`
+      last = re.lastIndex
+    }
+    return out + esc(text.slice(last))
+  }
+  function prettyBody(raw) {
+    try { return { html: highlightJson(JSON.stringify(JSON.parse(raw), null, 2)), json: true } }
+    catch { return { html: esc(raw), json: false } }
+  }
+  function renderResponse(req) {
+    const st = $("#resStatus"), tabs = $("#resTabs"), body = $("#resBody")
+    if (!st) return
+    if (ui.sending && ui.sending.reqId === req.id) {
+      st.innerHTML = `<div class="spinner"></div><span class="meta">Enviando...</span>`
+      tabs.innerHTML = ""; body.innerHTML = ""
+      $("#sendBtn").textContent = "Cancelar"
+      return
+    }
+    $("#sendBtn").textContent = "Enviar"
+    const res = responses[req.id]
+    if (!res) {
+      st.innerHTML = `<span class="meta">Resposta</span>`
+      tabs.innerHTML = ""
+      body.innerHTML = `<div class="empty-res">Nenhuma resposta ainda.<br>Clique em <b>Enviar</b> ou aperte <kbd>Ctrl</kbd> + <kbd>Enter</kbd>.</div>`
+      return
+    }
+    if (res.error) {
+      st.innerHTML = `<span class="pill err">${esc(res.errorTitle || "ERRO")}</span>`
+      tabs.innerHTML = ""
+      body.innerHTML = `<div class="error-box">${res.error}</div>`
+      return
+    }
+    const cls = "s" + String(res.status)[0]
+    st.innerHTML = `<span class="pill ${cls}">${res.status} ${esc(res.statusText || "")}</span>
+      <span class="meta">${res.time} ms</span><span class="meta">${formatBytes(res.size)}</span>
+      <span class="meta" style="margin-left:auto" title="${esc(new Date(res.at).toLocaleString())}">${esc(new Date(res.at).toLocaleTimeString())}</span>`
+    tabs.innerHTML = `
+      <button class="tab${ui.resTab === "body" ? " on" : ""}" data-tab="body">Body</button>
+      <button class="tab${ui.resTab === "headers" ? " on" : ""}" data-tab="headers">Headers<span class="count">${res.headers.length}</span></button>
+      <span class="spacer"></span>
+      <button class="btn sm" id="copyRes">Copiar</button>`
+    tabs.onclick = e => {
+      const t = e.target.closest("[data-tab]")
+      if (t) { ui.resTab = t.dataset.tab; renderResponse(req) }
+    }
+    $("#copyRes").onclick = () => copy(ui.resTab === "body" ? res.body : res.headers.map(h => h.join(": ")).join("\n"), "Copiado")
+    if (ui.resTab === "body") {
+      if (!res.body) { body.innerHTML = `<div class="empty-res">Resposta sem body${res.status === 204 ? " (204 No Content)" : ""}.</div>`; return }
+      body.innerHTML = `<pre class="out">${prettyBody(res.body).html}</pre>`
+    } else {
+      body.innerHTML = `<table class="hdr-table">${res.headers.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>
+        <p class="hint">O navegador só mostra os headers que a API libera pelo CORS.</p>`
+    }
+  }
+  function errorHtml(title, items) {
+    return `<b>${esc(title)}</b><ul>${items.map(i => `<li>${i}</li>`).join("")}</ul>`
+  }
+
+  async function send(req) {
+    if (ui.sending) return
+    const built = buildRequest(ctx(), req)
+    if (built.problems.length) {
+      responses[req.id] = { errorTitle: "NÃO ENVIADO", error: errorHtml("Arrume isso antes de enviar:", built.problems.map(esc)), at: Date.now() }
+      renderResponse(req); return
+    }
+    const controller = new AbortController()
+    ui.sending = { reqId: req.id, controller }
+    renderResponse(req)
+    const t0 = performance.now()
+    try {
+      const res = await fetch(built.url, { method: built.method, headers: built.headers, body: built.body, signal: controller.signal })
+      const text = await res.text()
+      responses[req.id] = {
+        status: res.status, statusText: res.statusText, time: Math.round(performance.now() - t0),
+        size: new Blob([text]).size, headers: [...res.headers.entries()], body: text, at: Date.now(),
+      }
+    } catch (err) {
+      if (err.name === "AbortError") {
+        responses[req.id] = { errorTitle: "CANCELADO", error: "<b>Requisição cancelada.</b>", at: Date.now() }
+      } else {
+        responses[req.id] = {
+          errorTitle: "SEM RESPOSTA", at: Date.now(),
+          error: errorHtml(`Não consegui falar com ${built.url}`, [
+            "O servidor está rodando? (<code>npm run dev</code>)",
+            "A porta e o endereço estão certos? Confira o <code>baseUrl</code> em <b>Variáveis</b>.",
+            "A API liberou o <b>CORS</b>? Sem isso o navegador bloqueia. Veja em <b>Ajuda</b>.",
+            "Abra o console do navegador (F12) pra ver a mensagem completa.",
+          ]),
+        }
+      }
+    } finally {
+      ui.sending = null
+      saveResponses()
+      // só redesenha se o aluno ainda está olhando essa requisição
+      if (active() && active().id === req.id) renderResponse(req)
+    }
+  }
+  function cancelSend() { ui.sending && ui.sending.controller.abort() }
+
+  async function copy(text, msg) {
+    try { await navigator.clipboard.writeText(text) }
+    catch {
+      const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta)
+      ta.select(); document.execCommand("copy"); ta.remove()
+    }
+    toast(msg)
+  }
+
+  /* ---------- ambientes ---------- */
+  function renderEnvSelect() {
+    $("#envSelect").innerHTML = state.envs.map(e => `<option value="${e.id}" ${e.id === state.activeEnvId ? "selected" : ""}>${esc(e.name)}</option>`).join("")
+      + `<option value="__new">+ Novo ambiente...</option>`
+  }
+  $("#envSelect").addEventListener("change", e => {
+    if (e.target.value === "__new") {
+      const env = newEnv({ name: "Ambiente " + (state.envs.length + 1), vars: [{ key: "baseUrl", value: "http://localhost:3333", enabled: true }] })
+      state.envs.push(env); state.activeEnvId = env.id; save(); render(); openEnv()
+      return
+    }
+    state.activeEnvId = e.target.value; save(); render()
+  })
+  function modal(title, bodyHtml, footHtml) {
+    $("#modalRoot").innerHTML = `<div class="overlay" id="overlay"><div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head"><h2>${title}</h2><button class="icon-btn" id="mClose" title="Fechar">✕</button></div>
+      <div class="modal-body">${bodyHtml}</div>
+      ${footHtml ? `<div class="modal-foot">${footHtml}</div>` : ""}</div></div>`
+    const close = () => { $("#modalRoot").innerHTML = ""; render() }
+    $("#mClose").onclick = close
+    $("#overlay").addEventListener("mousedown", e => { if (e.target.id === "overlay") close() })
+    return close
+  }
+  function openEnv() {
+    let env = state.envs.find(e => e.id === state.activeEnvId)
+    if (!env) { env = newEnv({ name: "Local" }); state.envs.push(env); state.activeEnvId = env.id }
+    const close = modal("Variáveis do ambiente", `
+      <div class="field"><label>Nome do ambiente</label><input id="envName" value="${esc(env.name)}"></div>
+      <p class="hint">Use nas requisições com <code>{{nome}}</code>, por exemplo <code>{{baseUrl}}/categoria</code>.
+      Troque de ambiente no topo da tela (ex.: Local e Produção com <code>baseUrl</code> diferentes).</p>
+      <div id="envVars">${kvHtml(env.vars, "env", "nome", "valor")}</div>`,
+      `${state.envs.length > 1 ? `<button class="btn danger" id="envDel">Excluir ambiente</button>` : ""}<span style="flex:1"></span><button class="btn primary" id="envOk">Pronto</button>`)
+    $("#envName").addEventListener("input", e => { env.name = e.target.value; save(); renderEnvSelect() })
+    bindKv($("#envVars"), env.vars, structural => {
+      if (structural) { $("#envVars").innerHTML = kvHtml(env.vars, "env", "nome", "valor") }
+    })
+    $("#envOk").onclick = close
+    const del = $("#envDel")
+    if (del) del.onclick = () => {
+      if (!confirm(`Excluir o ambiente "${env.name}"?`)) return
+      state.envs = state.envs.filter(e => e !== env); state.activeEnvId = state.envs[0].id
+      save(); close()
+    }
+  }
+  $("#btnEnv").addEventListener("click", openEnv)
+
+  /* ---------- importar / exportar ---------- */
+  function download(name, data) {
+    data.exportedAt = new Date().toISOString()
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(blob)
+    a.download = (name || "colecao").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-").toLowerCase() + ".testador.json"
+    a.click()
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000)
+  }
+  $("#btnExport").addEventListener("click", () => {
+    download("colecao", { format: "testador-api", version: 1, envs: state.envs, items: state.items })
+    toast("Coleção exportada")
+  })
+  $("#btnImport").addEventListener("click", () => $("#fileInput").click())
+  $("#fileInput").addEventListener("change", async e => {
+    const files = [...e.target.files]
+    e.target.value = ""
+    let total = 0, firstId = null
+    const errors = []
+    for (const file of files) {
+      try {
+        const out = importText(await file.text(), file.name)
+        state.items.push(...out.items)
+        for (const env of out.envs) {
+          const same = state.envs.find(x => x.name === env.name)
+          if (same) for (const v of env.vars) {
+            const hit = same.vars.find(x => x.key === v.key)
+            if (hit) hit.value = v.value; else same.vars.push(v)
+          } else state.envs.push(env)
+        }
+        total += countRequests(out.items)
+        walk(out.items, it => { if (!firstId && it.type === "request") firstId = it.id })
+      } catch (err) { errors.push(`${file.name}: ${err.message}`) }
+    }
+    if (firstId) state.activeId = firstId
+    save(); render()
+    if (errors.length) alert("Alguns arquivos não foram importados:\n\n" + errors.join("\n"))
+    if (total) toast(`${total} requisições importadas`)
+  })
+
+  /* ---------- ajuda ---------- */
+  function openHelp() {
+    modal("Como usar", `<div class="help">
+      <h4>1. Criar e enviar</h4>
+      <ul>
+        <li><b>+ Requisição</b> cria uma requisição na pasta selecionada.</li>
+        <li>Escolha o método (GET, POST...), escreva a URL e clique em <b>Enviar</b> (ou <code>Ctrl + Enter</code>).</li>
+        <li>Pra mandar dados, abra a aba <b>Body</b> e escolha <b>JSON</b>.</li>
+        <li>Tudo é salvo sozinho no navegador. Pra levar pra outro computador, use <b>Exportar</b>.</li>
+      </ul>
+      <h4>2. Variáveis</h4>
+      <ul>
+        <li>Em <b>Variáveis</b> (topo), crie <code>baseUrl = http://localhost:3333</code> e use <code>{{baseUrl}}/categoria</code>.</li>
+        <li>Pastas também podem ter variáveis (clique na pasta). Elas valem só lá dentro.</li>
+        <li>A linha cinza debaixo da URL mostra como ela vai ficar. Em vermelho: variável que não existe.</li>
+        <li>Prontas: <code>{{$guid}}</code>, <code>{{$timestamp}}</code>, <code>{{$randomInt 1 100}}</code>.</li>
+      </ul>
+      <h4>3. Usar a resposta de uma requisição em outra</h4>
+      <ul>
+        <li>Na aba <b>Mais</b> da requisição de login, dê o nome de referência <code>login</code>.</li>
+        <li>Em outra requisição, use <code>{{login.response.body.token}}</code> (na aba Auth, por exemplo).</li>
+        <li>Funciona pra qualquer campo: <code>{{criarCategoria.response.body.categoria_id}}</code>.</li>
+      </ul>
+      <h4>4. Importar</h4>
+      <ul>
+        <li><b>Insomnia</b>: exporte a coleção em JSON (formato v4) e importe aqui.</li>
+        <li><b>Postman</b>: coleção v2.1 em JSON.</li>
+        <li>Arquivos <b>.http</b> da extensão REST Client: dá pra selecionar vários de uma vez. Cada arquivo vira uma pasta.</li>
+        <li>Arquivos exportados por este próprio testador.</li>
+      </ul>
+      <h4>5. "Não consegui falar com a API" (CORS)</h4>
+      <p>O navegador só deixa esta página chamar a API se a API permitir (isso se chama <b>CORS</b>). No Fastify:</p>
+      <pre>npm install @fastify/cors
+
+// src/server.ts
+import cors from "@fastify/cors"
+
+app.register(cors, {
+    origin: true,
+    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+})</pre>
+      <p>Sem a lista de <code>methods</code>, o plugin libera só GET, HEAD e POST, e o PUT e o DELETE são bloqueados.</p>
+    </div>`)
+  }
+  $("#btnHelp").addEventListener("click", openHelp)
+
+  /* ---------- atalhos ---------- */
+  document.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      const it = active()
+      if (it && it.type === "request") { e.preventDefault(); send(it) }
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") { e.preventDefault(); toast("Tudo é salvo automaticamente") }
+    if (e.key === "Escape" && $("#overlay")) { $("#modalRoot").innerHTML = ""; render() }
+  })
+
+  render()
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,478 @@
+{
+  "format": "testador-api",
+  "version": 1,
+  "envs": [
+    {
+      "id": "env_local",
+      "name": "Local",
+      "vars": [
+        {
+          "key": "baseUrl",
+          "value": "http://localhost:3333",
+          "enabled": true
+        }
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "fld_006",
+      "type": "folder",
+      "name": "1. Usuário",
+      "open": true,
+      "vars": [],
+      "children": [
+        {
+          "id": "req_001",
+          "type": "request",
+          "name": "Cria usuário",
+          "method": "POST",
+          "url": "{{baseUrl}}/usuario",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"name\": \"pedro\",\n  \"email\": \"pedro@email.com\",\n  \"password\": \"9999\"\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": "criarUsuario"
+        },
+        {
+          "id": "req_002",
+          "type": "request",
+          "name": "Lista usuários",
+          "method": "GET",
+          "url": "{{baseUrl}}/usuario",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_003",
+          "type": "request",
+          "name": "Busca usuário pelo id",
+          "method": "GET",
+          "url": "{{baseUrl}}/usuario/{{criarUsuario.response.body.usuario_id}}",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_004",
+          "type": "request",
+          "name": "Atualiza usuário",
+          "method": "PUT",
+          "url": "{{baseUrl}}/usuario/{{criarUsuario.response.body.usuario_id}}",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"name\": \"pedro silva\",\n  \"email\": \"pedro@email.com\",\n  \"password\": \"9999\"\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_005",
+          "type": "request",
+          "name": "Remove usuário",
+          "method": "DELETE",
+          "url": "{{baseUrl}}/usuario/{{criarUsuario.response.body.usuario_id}}",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        }
+      ]
+    },
+    {
+      "id": "fld_009",
+      "type": "folder",
+      "name": "2. Login (JWT)",
+      "open": true,
+      "vars": [],
+      "children": [
+        {
+          "id": "req_007",
+          "type": "request",
+          "name": "Login",
+          "method": "POST",
+          "url": "{{baseUrl}}/auth/login",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"email\": \"pedro@email.com\",\n  \"password\": \"9999\"\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": "login"
+        },
+        {
+          "id": "req_008",
+          "type": "request",
+          "name": "Meus dados (rota protegida)",
+          "method": "GET",
+          "url": "{{baseUrl}}/auth/me",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "bearer",
+            "token": "{{login.response.body.token}}"
+          },
+          "refName": ""
+        }
+      ]
+    },
+    {
+      "id": "fld_015",
+      "type": "folder",
+      "name": "3. Categoria",
+      "open": true,
+      "vars": [],
+      "children": [
+        {
+          "id": "req_010",
+          "type": "request",
+          "name": "Cria categoria",
+          "method": "POST",
+          "url": "{{baseUrl}}/categoria",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"nome\": \"Música\"\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": "criarCategoria"
+        },
+        {
+          "id": "req_011",
+          "type": "request",
+          "name": "Lista categorias",
+          "method": "GET",
+          "url": "{{baseUrl}}/categoria",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_012",
+          "type": "request",
+          "name": "Busca categoria pelo id",
+          "method": "GET",
+          "url": "{{baseUrl}}/categoria/{{criarCategoria.response.body.categoria_id}}",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_013",
+          "type": "request",
+          "name": "Atualiza categoria",
+          "method": "PUT",
+          "url": "{{baseUrl}}/categoria/{{criarCategoria.response.body.categoria_id}}",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"nome\": \"Música e Som\"\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_014",
+          "type": "request",
+          "name": "Remove categoria",
+          "method": "DELETE",
+          "url": "{{baseUrl}}/categoria/{{criarCategoria.response.body.categoria_id}}",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        }
+      ]
+    },
+    {
+      "id": "fld_021",
+      "type": "folder",
+      "name": "4. Subcategoria (rode antes o 'Cria categoria')",
+      "open": true,
+      "vars": [],
+      "children": [
+        {
+          "id": "req_016",
+          "type": "request",
+          "name": "Cria subcategoria",
+          "method": "POST",
+          "url": "{{baseUrl}}/subcategoria",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"categoria_id\": \"{{criarCategoria.response.body.categoria_id}}\",\n  \"nome\": \"Samba\"\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": "criarSubcategoria"
+        },
+        {
+          "id": "req_017",
+          "type": "request",
+          "name": "Lista subcategorias",
+          "method": "GET",
+          "url": "{{baseUrl}}/subcategoria",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_018",
+          "type": "request",
+          "name": "Busca subcategoria pelo id",
+          "method": "GET",
+          "url": "{{baseUrl}}/subcategoria/{{criarSubcategoria.response.body.subcategoria_id}}",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_019",
+          "type": "request",
+          "name": "Atualiza subcategoria",
+          "method": "PUT",
+          "url": "{{baseUrl}}/subcategoria/{{criarSubcategoria.response.body.subcategoria_id}}",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"categoria_id\": \"{{criarCategoria.response.body.categoria_id}}\",\n  \"nome\": \"Samba de roda\"\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_020",
+          "type": "request",
+          "name": "Remove subcategoria",
+          "method": "DELETE",
+          "url": "{{baseUrl}}/subcategoria/{{criarSubcategoria.response.body.subcategoria_id}}",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        }
+      ]
+    },
+    {
+      "id": "fld_027",
+      "type": "folder",
+      "name": "5. Bairro",
+      "open": true,
+      "vars": [],
+      "children": [
+        {
+          "id": "req_022",
+          "type": "request",
+          "name": "Cria bairro",
+          "method": "POST",
+          "url": "{{baseUrl}}/bairro",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"nome\": \"Centro\",\n  \"latitude\": -3.7319,\n  \"longitude\": -38.5267\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": "criarBairro"
+        },
+        {
+          "id": "req_023",
+          "type": "request",
+          "name": "Lista bairros",
+          "method": "GET",
+          "url": "{{baseUrl}}/bairro",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_024",
+          "type": "request",
+          "name": "Busca bairro pelo id",
+          "method": "GET",
+          "url": "{{baseUrl}}/bairro/{{criarBairro.response.body.bairro_id}}",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_025",
+          "type": "request",
+          "name": "Atualiza bairro",
+          "method": "PUT",
+          "url": "{{baseUrl}}/bairro/{{criarBairro.response.body.bairro_id}}",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"nome\": \"Centro Histórico\",\n  \"latitude\": -3.7319,\n  \"longitude\": -38.5267\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_026",
+          "type": "request",
+          "name": "Remove bairro",
+          "method": "DELETE",
+          "url": "{{baseUrl}}/bairro/{{criarBairro.response.body.bairro_id}}",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        }
+      ]
+    },
+    {
+      "id": "fld_033",
+      "type": "folder",
+      "name": "6. Espaço cultural (rode antes o 'Cria bairro')",
+      "open": true,
+      "vars": [],
+      "children": [
+        {
+          "id": "req_028",
+          "type": "request",
+          "name": "Cria espaço cultural",
+          "method": "POST",
+          "url": "{{baseUrl}}/espaco-cultural",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"bairro_id\": \"{{criarBairro.response.body.bairro_id}}\",\n  \"nome\": \"Teatro Municipal\",\n  \"natureza\": \"público\",\n  \"tipo_espaco\": \"teatro\",\n  \"endereco\": \"Rua das Flores, 100\",\n  \"latitude\": -3.7301,\n  \"longitude\": -38.5212,\n  \"capacidade\": 500\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": "criarEspaco"
+        },
+        {
+          "id": "req_029",
+          "type": "request",
+          "name": "Lista espaços culturais",
+          "method": "GET",
+          "url": "{{baseUrl}}/espaco-cultural",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_030",
+          "type": "request",
+          "name": "Busca espaço cultural pelo id",
+          "method": "GET",
+          "url": "{{baseUrl}}/espaco-cultural/{{criarEspaco.response.body.espaco_id}}",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_031",
+          "type": "request",
+          "name": "Atualiza espaço cultural",
+          "method": "PUT",
+          "url": "{{baseUrl}}/espaco-cultural/{{criarEspaco.response.body.espaco_id}}",
+          "headers": [],
+          "bodyType": "json",
+          "body": "{\n  \"bairro_id\": \"{{criarBairro.response.body.bairro_id}}\",\n  \"nome\": \"Teatro Municipal\",\n  \"natureza\": \"público\",\n  \"tipo_espaco\": \"teatro\",\n  \"endereco\": \"Rua das Flores, 100\",\n  \"latitude\": -3.7301,\n  \"longitude\": -38.5212,\n  \"capacidade\": 650\n}",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        },
+        {
+          "id": "req_032",
+          "type": "request",
+          "name": "Remove espaço cultural",
+          "method": "DELETE",
+          "url": "{{baseUrl}}/espaco-cultural/{{criarEspaco.response.body.espaco_id}}",
+          "headers": [],
+          "bodyType": "none",
+          "body": "",
+          "auth": {
+            "type": "none",
+            "token": ""
+          },
+          "refName": ""
+        }
+      ]
+    }
+  ]
+}

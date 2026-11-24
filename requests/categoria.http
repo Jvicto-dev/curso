@@ -1,0 +1,35 @@
+@baseUrl = http://localhost:3333
+
+# ============================================================
+# CRUD de categoria
+# ============================================================
+
+### CREATE - cria uma categoria
+# @name criarCategoria
+POST {{baseUrl}}/categoria
+Content-Type: application/json
+
+{
+    "nome": "Música"
+}
+
+###
+# O id vem da resposta do POST acima (rode ele antes)
+@categoria_id = {{criarCategoria.response.body.categoria_id}}
+
+### READ - lista todas as categorias
+GET {{baseUrl}}/categoria
+
+### READ - busca uma categoria pelo id
+GET {{baseUrl}}/categoria/{{categoria_id}}
+
+### UPDATE - troca o nome da categoria
+PUT {{baseUrl}}/categoria/{{categoria_id}}
+Content-Type: application/json
+
+{
+    "nome": "Música e Som"
+}
+
+### DELETE - remove a categoria (e as subcategorias dela)
+DELETE {{baseUrl}}/categoria/{{categoria_id}}

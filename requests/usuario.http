@@ -1,0 +1,39 @@
+@baseUrl = http://localhost:3333
+
+# ============================================================
+# CRUD de usuario
+# ============================================================
+
+### CREATE - cria um usuário
+# @name criarUsuario
+POST {{baseUrl}}/usuario
+Content-Type: application/json
+
+{
+    "name": "pedro",
+    "email": "pedro@email.com",
+    "password": "9999"
+}
+
+###
+# O id vem da resposta do POST acima (rode ele antes)
+@usuario_id = {{criarUsuario.response.body.usuario_id}}
+
+### READ - lista todos os usuários
+GET {{baseUrl}}/usuario
+
+### READ - busca um usuário pelo id
+GET {{baseUrl}}/usuario/{{usuario_id}}
+
+### UPDATE - atualiza um usuário
+PUT {{baseUrl}}/usuario/{{usuario_id}}
+Content-Type: application/json
+
+{
+    "name": "joao silva 3333",
+    "email": "joaozinho22@gmail.com",
+    "password": "999999999999"
+}
+
+### DELETE - remove um usuário
+DELETE {{baseUrl}}/usuario/{{usuario_id}}

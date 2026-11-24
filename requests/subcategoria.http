@@ -1,0 +1,49 @@
+@baseUrl = http://localhost:3333
+
+# ============================================================
+# CRUD de subcategoria
+# ============================================================
+
+### PREPARAÇÃO - cria uma categoria pra subcategoria ficar dentro dela
+# (a variável de outro arquivo não chega aqui, por isso criamos uma neste)
+# @name criarCategoria
+POST {{baseUrl}}/categoria
+Content-Type: application/json
+
+{
+    "nome": "Dança"
+}
+
+###
+@categoria_id = {{criarCategoria.response.body.categoria_id}}
+
+### CREATE - cria uma subcategoria dentro da categoria acima
+# @name criarSubcategoria
+POST {{baseUrl}}/subcategoria
+Content-Type: application/json
+
+{
+    "categoria_id": "{{categoria_id}}",
+    "nome": "Frevo"
+}
+
+###
+@subcategoria_id = {{criarSubcategoria.response.body.subcategoria_id}}
+
+### READ - lista todas as subcategorias
+GET {{baseUrl}}/subcategoria
+
+### READ - busca uma subcategoria pelo id
+GET {{baseUrl}}/subcategoria/{{subcategoria_id}}
+
+### UPDATE - atualiza a subcategoria
+PUT {{baseUrl}}/subcategoria/{{subcategoria_id}}
+Content-Type: application/json
+
+{
+    "categoria_id": "{{categoria_id}}",
+    "nome": "Frevo de rua"
+}
+
+### DELETE - remove a subcategoria
+DELETE {{baseUrl}}/subcategoria/{{subcategoria_id}}

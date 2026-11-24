@@ -1,0 +1,63 @@
+@baseUrl = http://localhost:3333
+
+# ============================================================
+# CRUD de espaço cultural
+# ============================================================
+
+### PREPARAÇÃO - cria um bairro pro espaço cultural ficar nele
+# (a variável de outro arquivo não chega aqui, por isso criamos um neste)
+# @name criarBairro
+POST {{baseUrl}}/bairro
+Content-Type: application/json
+
+{
+    "nome": "Praia de Iracema",
+    "latitude": -3.7220,
+    "longitude": -38.5160
+}
+
+###
+@bairro_id = {{criarBairro.response.body.bairro_id}}
+
+### CREATE - cria um espaço cultural no bairro acima
+# @name criarEspaco
+POST {{baseUrl}}/espaco-cultural
+Content-Type: application/json
+
+{
+    "bairro_id": "{{bairro_id}}",
+    "nome": "Teatro Municipal",
+    "natureza": "público",
+    "tipo_espaco": "teatro",
+    "endereco": "Rua das Flores, 100",
+    "latitude": -3.7301,
+    "longitude": -38.5212,
+    "capacidade": 500
+}
+
+###
+@espaco_id = {{criarEspaco.response.body.espaco_id}}
+
+### READ - lista todos os espaços culturais
+GET {{baseUrl}}/espaco-cultural
+
+### READ - busca um espaço cultural pelo id
+GET {{baseUrl}}/espaco-cultural/{{espaco_id}}
+
+### UPDATE - atualiza o espaço cultural
+PUT {{baseUrl}}/espaco-cultural/{{espaco_id}}
+Content-Type: application/json
+
+{
+    "bairro_id": "{{bairro_id}}",
+    "nome": "Teatro Municipal",
+    "natureza": "público",
+    "tipo_espaco": "teatro",
+    "endereco": "Rua das Flores, 100",
+    "latitude": -3.7301,
+    "longitude": -38.5212,
+    "capacidade": 650
+}
+
+### DELETE - remove o espaço cultural
+DELETE {{baseUrl}}/espaco-cultural/{{espaco_id}}
